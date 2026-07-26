@@ -1,122 +1,117 @@
 "use client";
 
 import { useState } from "react";
-import { propertyTypes, budgetRanges, neighborhoods } from "@/lib/data";
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+type Errors = {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+};
+
+const fieldLabelClasses = "text-xs uppercase tracking-widest-luxe text-muted-foreground";
+
+function fieldClasses(hasError: boolean) {
+  return `mt-2 w-full border-b bg-transparent py-2 text-sm text-onyx placeholder:text-muted-foreground/60 focus:outline-none ${
+    hasError ? "border-red-500 focus:border-red-500" : "border-stone focus:border-onyx"
+  }`;
+}
 
 export default function ContactForm() {
   const [submitted, setSubmitted] = useState(false);
+  const [errors, setErrors] = useState<Errors>({});
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setSubmitted(true);
+
+    const formData = new FormData(e.currentTarget);
+    const firstName = String(formData.get("firstName") ?? "").trim();
+    const lastName = String(formData.get("lastName") ?? "").trim();
+    const email = String(formData.get("email") ?? "").trim();
+
+    const nextErrors: Errors = {};
+    if (!firstName) nextErrors.firstName = "Please enter your first name.";
+    if (!lastName) nextErrors.lastName = "Please enter your last name.";
+    if (!email) {
+      nextErrors.email = "Please enter your email.";
+    } else if (!EMAIL_PATTERN.test(email)) {
+      nextErrors.email = "Please enter a valid email address.";
+    }
+
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length === 0) {
+      setSubmitted(true);
+    }
   }
 
   if (submitted) {
     return (
-      <div className="rounded-3xl bg-muted p-10">
-        <h3 className="font-heading text-xl font-medium text-onyx">
-          Thank you.
-        </h3>
+      <div className="rounded-3xl bg-white p-10 shadow-2xl shadow-onyx/20">
+        <h3 className="font-heading text-xl font-medium text-onyx">Thank you.</h3>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Your enquiry has been received. A member of our advisory team will
-          be in touch shortly to arrange a private consultation.
+          Our advisory team will reach out within 2 hours to arrange your private consultation.
         </p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-3xl bg-muted p-8 sm:p-10">
-      <p className="font-heading text-2xl leading-relaxed text-onyx">
-        I am looking for a{" "}
-        <select
-          required
-          defaultValue=""
-          className="border-b border-onyx/30 bg-transparent px-1 font-heading text-2xl text-onyx focus:outline-none"
-        >
-          <option value="" disabled>
-            property type
-          </option>
-          {propertyTypes.map((t) => (
-            <option key={t} value={t}>
-              {t}
-            </option>
-          ))}
-        </select>{" "}
-        in{" "}
-        <select
-          required
-          defaultValue=""
-          className="border-b border-onyx/30 bg-transparent px-1 font-heading text-2xl text-onyx focus:outline-none"
-        >
-          <option value="" disabled>
-            an area
-          </option>
-          {neighborhoods.map((n) => (
-            <option key={n.name} value={n.name}>
-              {n.name}
-            </option>
-          ))}
-        </select>{" "}
-        with a budget of{" "}
-        <select
-          required
-          defaultValue=""
-          className="border-b border-onyx/30 bg-transparent px-1 font-heading text-2xl text-onyx focus:outline-none"
-        >
-          <option value="" disabled>
-            price range
-          </option>
-          {budgetRanges.map((b) => (
-            <option key={b} value={b}>
-              {b}
-            </option>
-          ))}
-        </select>
-        .
-      </p>
-
-      <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2">
+    <form
+      onSubmit={handleSubmit}
+      noValidate
+      className="rounded-3xl bg-white p-8 shadow-2xl shadow-onyx/20 sm:p-10"
+    >
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
         <div>
-          <label className="text-xs uppercase tracking-widest-luxe text-muted-foreground">
-            My Name Is
-          </label>
+          <label className={fieldLabelClasses}>First Name</label>
           <input
             type="text"
-            required
-            placeholder="Full name"
-            className="mt-2 w-full border-b border-stone bg-transparent py-2 text-sm text-onyx placeholder:text-muted-foreground/60 focus:border-onyx focus:outline-none"
+            name="firstName"
+            placeholder="First name"
+            aria-invalid={!!errors.firstName}
+            className={fieldClasses(!!errors.firstName)}
           />
+          {errors.firstName && <p className="mt-1.5 text-xs text-red-500">{errors.firstName}</p>}
         </div>
         <div>
-          <label className="text-xs uppercase tracking-widest-luxe text-muted-foreground">
-            Reach Me At
-          </label>
+          <label className={fieldLabelClasses}>Last Name</label>
+          <input
+            type="text"
+            name="lastName"
+            placeholder="Last name"
+            aria-invalid={!!errors.lastName}
+            className={fieldClasses(!!errors.lastName)}
+          />
+          {errors.lastName && <p className="mt-1.5 text-xs text-red-500">{errors.lastName}</p>}
+        </div>
+        <div>
+          <label className={fieldLabelClasses}>Email</label>
           <input
             type="email"
-            required
+            name="email"
             placeholder="Email address"
-            className="mt-2 w-full border-b border-stone bg-transparent py-2 text-sm text-onyx placeholder:text-muted-foreground/60 focus:border-onyx focus:outline-none"
+            aria-invalid={!!errors.email}
+            className={fieldClasses(!!errors.email)}
           />
+          {errors.email && <p className="mt-1.5 text-xs text-red-500">{errors.email}</p>}
         </div>
         <div>
-          <label className="text-xs uppercase tracking-widest-luxe text-muted-foreground">
-            Phone
-          </label>
+          <label className={fieldLabelClasses}>Phone</label>
           <input
             type="tel"
+            name="phone"
             placeholder="+971 ..."
-            className="mt-2 w-full border-b border-stone bg-transparent py-2 text-sm text-onyx placeholder:text-muted-foreground/60 focus:border-onyx focus:outline-none"
+            className={fieldClasses(false)}
           />
         </div>
         <div className="sm:col-span-2">
-          <label className="text-xs uppercase tracking-widest-luxe text-muted-foreground">
-            Additional Details (Optional)
-          </label>
+          <label className={fieldLabelClasses}>Message</label>
           <textarea
-            rows={3}
+            name="message"
+            rows={4}
             placeholder="Tell us about your ideal property..."
-            className="mt-2 w-full border-b border-stone bg-transparent py-2 text-sm text-onyx placeholder:text-muted-foreground/60 focus:border-onyx focus:outline-none"
+            className={fieldClasses(false)}
           />
         </div>
       </div>
@@ -127,6 +122,9 @@ export default function ContactForm() {
       >
         Request Private Viewing
       </button>
+      <p className="mt-3 text-center text-xs text-muted-foreground">
+        By submitting, you agree to be contacted about your enquiry.
+      </p>
     </form>
   );
 }

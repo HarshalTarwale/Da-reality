@@ -9,6 +9,7 @@ import AreaCard from "@/components/AreaCard";
 import WhyChooseUs from "@/components/WhyChooseUs";
 import LocationSection from "@/components/LocationSection";
 import ContactForm from "@/components/ContactForm";
+import ContactInfoRow from "@/components/ContactInfoRow";
 import Faq from "@/components/Faq";
 import { CarouselArrows, CarouselTrack, useCarouselRef } from "@/components/Carousel";
 import {
@@ -134,6 +135,7 @@ export default function Home() {
       </section>
 
       {/* Featured Areas */}
+      {/*
       <section id="areas" className="bg-muted py-24">
         <div className="mx-auto max-w-7xl px-6 lg:px-12">
           <SectionHeading
@@ -151,6 +153,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      */}
 
       {/* Featured Listings */}
       <section id="listings" className="py-24">
@@ -158,10 +161,10 @@ export default function Home() {
           <SectionHeading
             eyebrow="Portfolio"
             title="Featured Listings"
-            description="A curated selection of Dubai's most exceptional residences, available now."
+            description="A curated selection of Dubai's top-selling residences, available now."
           />
           <div className="mt-10 grid grid-cols-1 justify-items-center gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {properties.map((property) => (
+            {properties.slice(0, 6).map((property) => (
               <PropertyCard key={property.id} property={property} />
             ))}
           </div>
@@ -191,21 +194,31 @@ export default function Home() {
       <LocationSection />
 
       {/* Get in Touch */}
-      <section id="contact" className="py-24">
+      <section id="contact" className="bg-onyx py-24">
         <div className="mx-auto max-w-7xl px-6 lg:px-12">
-          <SectionHeading
-            eyebrow="Concierge"
-            title="Get in Touch"
-            description="Tell us what you're looking for. Our advisory team will curate a shortlist of properties tailored to your requirements and arrange private viewings at your convenience."
-          />
-          <div className="mt-10 grid grid-cols-1 gap-16 lg:grid-cols-2">
-            <div className="relative aspect-4/3 overflow-hidden rounded-3xl">
-              <Image
-                src={images.marinaApartmentInterior}
-                alt="Da Reality client lounge"
-                fill
-                className="object-cover"
-              />
+          <div className="max-w-xl">
+            <p className="text-xs font-medium uppercase tracking-widest-luxe text-gold">
+              Concierge
+            </p>
+            <h2 className="mt-3 font-heading text-3xl font-medium leading-tight text-alabaster sm:text-4xl">
+              Get in Touch
+            </h2>
+          </div>
+
+          <div className="mt-12 grid grid-cols-1 gap-16 lg:grid-cols-2 lg:items-start">
+            <div>
+              <div className="relative aspect-4/3 overflow-hidden rounded-3xl ring-1 ring-gold/30">
+                <Image
+                  src={images.marinaApartmentInterior}
+                  alt="Da Reality client lounge"
+                  fill
+                  className="object-cover"
+                />
+                <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-alabaster/10" />
+              </div>
+              <div className="mt-8">
+                <ContactInfoRow />
+              </div>
             </div>
             <ContactForm />
           </div>
