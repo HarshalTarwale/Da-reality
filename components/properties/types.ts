@@ -9,6 +9,9 @@ export type MockProperty = {
   size_sqft: number;
   status: string;
   image: string;
+  gallery: string[];
+  description: string;
+  amenities: string[];
   reference: string;
 };
 

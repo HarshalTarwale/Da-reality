@@ -99,7 +99,7 @@ export default function PropertyCard({ property }: { property: MockProperty }) {
           </span>
         </div>
         <Link
-          href={`/property/${property.id}`}
+          href={`/properties/${property.id}`}
           className="mt-5 block rounded-lg border border-onyx px-3 py-3 text-center text-[11px] font-medium uppercase tracking-wide text-onyx transition-colors hover:bg-onyx hover:text-alabaster"
         >
           View Details
