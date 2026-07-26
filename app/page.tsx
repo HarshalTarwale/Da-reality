@@ -94,8 +94,8 @@ export default function Home() {
         <div className="grid grid-cols-1 gap-16 lg:grid-cols-2 lg:items-center">
           <div className="relative aspect-4/5 overflow-hidden rounded-3xl">
             <Image
-              src={images.archDetail}
-              alt="Da Reality — architectural detail"
+              src={images.office}
+              alt="Da Reality — Downtown Dubai skyline"
               fill
               className="object-cover"
             />
