@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { logo } from "@/lib/data";
 
@@ -12,8 +13,15 @@ const navLinks = [
   { label: "Explore", href: "/properties#areas" },
 ];
 
+function isActive(pathname: string, href: string) {
+  const path = href.split("#")[0];
+  if (path === "/") return pathname === "/";
+  return pathname === path || pathname.startsWith(`${path}/`);
+}
+
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <header className="sticky top-0 z-50 bg-white">
@@ -34,7 +42,10 @@ export default function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-medium uppercase tracking-widest-luxe text-onyx/80 transition-colors hover:text-gold"
+              aria-current={isActive(pathname, link.href) ? "page" : undefined}
+              className={`text-sm font-medium uppercase tracking-widest-luxe transition-colors hover:text-gold ${
+                isActive(pathname, link.href) ? "text-gold" : "text-onyx/80"
+              }`}
             >
               {link.label}
             </Link>
@@ -66,7 +77,10 @@ export default function Header() {
               key={link.href}
               href={link.href}
               onClick={() => setOpen(false)}
-              className="py-2 text-sm font-medium uppercase tracking-widest-luxe text-onyx/80"
+              aria-current={isActive(pathname, link.href) ? "page" : undefined}
+              className={`py-2 text-sm font-medium uppercase tracking-widest-luxe ${
+                isActive(pathname, link.href) ? "text-gold" : "text-onyx/80"
+              }`}
             >
               {link.label}
             </Link>
