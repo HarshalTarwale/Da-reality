@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600" role="img" aria-label="Da Reality project placeholder">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a1d24"/>
+      <stop offset="100%" stop-color="#0f1115"/>
+    </linearGradient>
+    <linearGradient id="tower" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2a2e37"/>
+      <stop offset="100%" stop-color="#191c22"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="800" height="600" fill="url(#sky)"/>
+
+  <!-- skyline silhouette -->
+  <g fill="url(#tower)">
+    <rect x="120" y="300" width="90" height="240"/>
+    <rect x="228" y="228" width="76" height="312"/>
+    <rect x="322" y="168" width="104" height="372"/>
+    <rect x="444" y="252" width="84" height="288"/>
+    <rect x="546" y="312" width="94" height="228"/>
+  </g>
+
+  <!-- spire on the tallest tower -->
+  <path d="M374 168 L374 116 L378 116 L378 168 Z" fill="#b89665"/>
+
+  <!-- window grid -->
+  <g fill="#b89665" opacity="0.22">
+    <rect x="136" y="324" width="12" height="16"/><rect x="164" y="324" width="12" height="16"/>
+    <rect x="136" y="364" width="12" height="16"/><rect x="182" y="404" width="12" height="16"/>
+    <rect x="244" y="252" width="12" height="16"/><rect x="272" y="292" width="12" height="16"/>
+    <rect x="244" y="332" width="12" height="16"/><rect x="272" y="372" width="12" height="16"/>
+    <rect x="340" y="192" width="12" height="16"/><rect x="368" y="192" width="12" height="16"/>
+    <rect x="396" y="232" width="12" height="16"/><rect x="340" y="272" width="12" height="16"/>
+    <rect x="368" y="312" width="12" height="16"/><rect x="396" y="352" width="12" height="16"/>
+    <rect x="460" y="276" width="12" height="16"/><rect x="488" y="316" width="12" height="16"/>
+    <rect x="460" y="356" width="12" height="16"/><rect x="562" y="336" width="12" height="16"/>
+    <rect x="600" y="376" width="12" height="16"/><rect x="562" y="416" width="12" height="16"/>
+  </g>
+
+  <!-- ground line -->
+  <rect x="0" y="540" width="800" height="2" fill="#b89665" opacity="0.35"/>
+
+  <text x="400" y="586" text-anchor="middle"
+        font-family="Inter, Helvetica, Arial, sans-serif" font-size="15"
+        letter-spacing="5" fill="#f9f9f9" opacity="0.5">DA REALITY</text>
+</svg>

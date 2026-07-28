@@ -1,0 +1,1 @@
+ALTER TABLE "properties" ADD COLUMN "gallery" text[] DEFAULT '{}' NOT NULL;

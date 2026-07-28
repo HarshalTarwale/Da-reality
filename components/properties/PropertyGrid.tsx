@@ -3,10 +3,10 @@
 import { useMemo, useState } from "react";
 import FilterBar from "@/components/properties/FilterBar";
 import PropertyCard from "@/components/properties/PropertyCard";
-import { defaultFilters, type Filters, type MockProperty } from "@/components/properties/types";
-import mockProperties from "@/components/properties/mock-properties.json";
+import { defaultFilters, type Filters } from "@/components/properties/types";
+import type { ClientProject } from "@/lib/types";
 
-const PAGE_SIZE = 6;
+const PAGE_SIZE = 12;
 
 function SearchOffIcon() {
   return (
@@ -17,43 +17,48 @@ function SearchOffIcon() {
   );
 }
 
-function matchesBedrooms(bedrooms: number, filter: string) {
-  if (filter === "Any") return true;
-  if (filter === "Studio") return bedrooms === 0;
-  if (filter === "5+") return bedrooms >= 5;
-  return bedrooms === Number(filter);
+/** Zero upstream means "price not published", so treat it as unknown. */
+function effectivePrice(project: ClientProject) {
+  return project.priceFrom && project.priceFrom > 0 ? project.priceFrom : null;
 }
 
-function applyFilters(properties: MockProperty[], filters: Filters) {
+function applyFilters(projects: ClientProject[], filters: Filters) {
   const min = filters.minPrice ? Number(filters.minPrice) : undefined;
   const max = filters.maxPrice ? Number(filters.maxPrice) : undefined;
 
-  const filtered = properties.filter((p) => {
-    if (filters.propertyType !== "All" && p.property_type !== filters.propertyType) return false;
-    if (!matchesBedrooms(p.bedrooms, filters.bedrooms)) return false;
-    if (filters.community !== "All" && p.area !== filters.community) return false;
-    if (min !== undefined && p.price < min) return false;
-    if (max !== undefined && p.price > max) return false;
+  const filtered = projects.filter((p) => {
+    if (filters.developer !== "All" && p.developer !== filters.developer) return false;
+    if (filters.area !== "All" && p.area !== filters.area) return false;
+
+    const price = effectivePrice(p);
+    if (min !== undefined && (price === null || price < min)) return false;
+    if (max !== undefined && (price === null || price > max)) return false;
     return true;
   });
 
   if (filters.sort === "Price: Low to High") {
-    filtered.sort((a, b) => a.price - b.price);
+    filtered.sort((a, b) => (effectivePrice(a) ?? Infinity) - (effectivePrice(b) ?? Infinity));
   } else if (filters.sort === "Price: High to Low") {
-    filtered.sort((a, b) => b.price - a.price);
+    filtered.sort((a, b) => (effectivePrice(b) ?? -Infinity) - (effectivePrice(a) ?? -Infinity));
   }
+  // "Newest" keeps the server's createdAt DESC ordering.
 
   return filtered;
 }
 
-export default function PropertyGrid() {
+export default function PropertyGrid({
+  projects,
+  developers,
+  areas,
+}: {
+  projects: ClientProject[];
+  developers: string[];
+  areas: string[];
+}) {
   const [filters, setFilters] = useState<Filters>(defaultFilters);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
-  const results = useMemo(
-    () => applyFilters(mockProperties as MockProperty[], filters),
-    [filters]
-  );
+  const results = useMemo(() => applyFilters(projects, filters), [projects, filters]);
 
   function handleFilterChange(next: Partial<Filters>) {
     setFilters((prev) => ({ ...prev, ...next }));
@@ -70,7 +75,13 @@ export default function PropertyGrid() {
 
   return (
     <div>
-      <FilterBar filters={filters} onChange={handleFilterChange} resultCount={results.length} />
+      <FilterBar
+        filters={filters}
+        onChange={handleFilterChange}
+        resultCount={results.length}
+        developers={developers}
+        areas={areas}
+      />
 
       <section className="mx-auto max-w-7xl px-6 py-16 lg:px-12">
         {results.length === 0 ? (
@@ -79,11 +90,11 @@ export default function PropertyGrid() {
               <SearchOffIcon />
             </span>
             <h3 className="mt-5 font-heading text-xl font-medium text-onyx">
-              No properties match your filters
+              No projects match your filters
             </h3>
             <p className="mt-2 max-w-sm text-sm text-muted-foreground">
               Try adjusting your search criteria or reset your filters to see all available
-              properties.
+              projects.
             </p>
             <button
               type="button"
@@ -95,9 +106,12 @@ export default function PropertyGrid() {
           </div>
         ) : (
           <>
+            <p className="mb-8 text-sm text-muted-foreground">
+              Showing {visible.length} of {results.length} projects
+            </p>
             <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              {visible.map((property) => (
-                <PropertyCard key={property.id} property={property} />
+              {visible.map((project) => (
+                <PropertyCard key={project.id} project={project} />
               ))}
             </div>
 

@@ -1,29 +1,19 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import SectionHeading from "@/components/SectionHeading";
-import PropertyCard from "@/components/PropertyCard";
-import DevelopmentCard from "@/components/DevelopmentCard";
-import AreaCard from "@/components/AreaCard";
 import WhyChooseUs from "@/components/WhyChooseUs";
 import LocationSection from "@/components/LocationSection";
 import ContactForm from "@/components/ContactForm";
 import ContactInfoRow from "@/components/ContactInfoRow";
 import Faq from "@/components/Faq";
-import { CarouselArrows, CarouselTrack, useCarouselRef } from "@/components/Carousel";
-import {
-  images,
-  properties,
-  developments,
-  neighborhoods,
-  pillars,
-  developers,
-} from "@/lib/data";
+import FeaturedListings from "@/components/FeaturedListings";
+import DevelopmentsCarousel from "@/components/DevelopmentsCarousel";
+import { images, pillars, developers } from "@/lib/data";
+
+// Featured listings are read from the database, so render on demand.
+export const dynamic = "force-dynamic";
 
 export default function Home() {
-  const areasRef = useCarouselRef();
-  const developmentsRef = useCarouselRef();
 
   return (
     <div>
@@ -155,40 +145,9 @@ export default function Home() {
       </section>
       */}
 
-      {/* Featured Listings */}
-      <section id="listings" className="py-24">
-        <div className="mx-auto max-w-7xl px-6 lg:px-12">
-          <SectionHeading
-            eyebrow="Portfolio"
-            title="Featured Listings"
-            description="A curated selection of Dubai's top-selling residences, available now."
-          />
-          <div className="mt-10 grid grid-cols-1 justify-items-center gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {properties.slice(0, 6).map((property) => (
-              <PropertyCard key={property.id} property={property} />
-            ))}
-          </div>
-        </div>
-      </section>
+      <FeaturedListings />
 
-      {/* New Developments */}
-      <section id="developments" className="bg-muted py-24">
-        <div className="mx-auto max-w-7xl px-6 lg:px-12">
-          <SectionHeading
-            eyebrow="Off-Plan"
-            title="New Developments"
-            description="Exclusive early access to the city's most anticipated off-plan launches — at preferred pricing before public release."
-            actions={<CarouselArrows targetRef={developmentsRef} />}
-          />
-          <div className="mt-10">
-            <CarouselTrack targetRef={developmentsRef}>
-              {developments.map((dev) => (
-                <DevelopmentCard key={dev.id} development={dev} />
-              ))}
-            </CarouselTrack>
-          </div>
-        </div>
-      </section>
+      <DevelopmentsCarousel />
 
       <WhyChooseUs />
       <LocationSection />

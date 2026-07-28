@@ -1,52 +1,25 @@
-export type MockProperty = {
-  id: string;
-  title: string;
-  price: number;
-  area: string;
-  property_type: string;
-  bedrooms: number;
-  bathrooms: number;
-  size_sqft: number;
-  status: string;
-  image: string;
-  gallery: string[];
-  description: string;
-  amenities: string[];
-  reference: string;
-};
-
-export const propertyTypeOptions = ["All", "Apartment", "Villa", "Townhouse", "Penthouse", "Duplex"];
-
-export const bedroomOptions = ["Any", "Studio", "1", "2", "3", "4", "5+"];
-
-export const communityOptions = [
-  "All",
-  "Downtown Dubai",
-  "Dubai Marina",
-  "Business Bay",
-  "Palm Jumeirah",
-  "Dubai Hills Estate",
-  "JVC",
-  "Arabian Ranches",
-];
+export type { Project, UnitBreakdown, UnitStats } from "@/lib/types";
 
 export const sortOptions = ["Newest", "Price: Low to High", "Price: High to Low"] as const;
 
 export type SortOption = (typeof sortOptions)[number];
 
+/**
+ * NOTE: the bedroom filter (Studio/1/2/3+) was removed with the move to
+ * project-level listings — a development spans many unit types rather than
+ * having one bedroom count. Unit types are surfaced on the card instead.
+ */
 export type Filters = {
-  propertyType: string;
-  bedrooms: string;
-  community: string;
+  developer: string;
+  area: string;
   minPrice: string;
   maxPrice: string;
   sort: SortOption;
 };
 
 export const defaultFilters: Filters = {
-  propertyType: "All",
-  bedrooms: "Any",
-  community: "All",
+  developer: "All",
+  area: "All",
   minPrice: "",
   maxPrice: "",
   sort: "Newest",

@@ -2,10 +2,7 @@
 
 import { useState } from "react";
 import {
-  bedroomOptions,
-  communityOptions,
   defaultFilters,
-  propertyTypeOptions,
   sortOptions,
   type Filters,
   type SortOption,
@@ -34,20 +31,25 @@ const labelClasses = "mb-1.5 block text-xs font-medium uppercase tracking-widest
 function FilterFields({
   filters,
   onChange,
+  developers,
+  areas,
 }: {
   filters: Filters;
   onChange: (next: Partial<Filters>) => void;
+  developers: string[];
+  areas: string[];
 }) {
   return (
     <>
       <div>
-        <label className={labelClasses}>Property Type</label>
+        <label className={labelClasses}>Developer</label>
         <select
           className={selectClasses}
-          value={filters.propertyType}
-          onChange={(e) => onChange({ propertyType: e.target.value })}
+          value={filters.developer}
+          onChange={(e) => onChange({ developer: e.target.value })}
         >
-          {propertyTypeOptions.map((opt) => (
+          <option value="All">All Developers</option>
+          {developers.map((opt) => (
             <option key={opt} value={opt}>
               {opt}
             </option>
@@ -56,13 +58,14 @@ function FilterFields({
       </div>
 
       <div>
-        <label className={labelClasses}>Bedrooms</label>
+        <label className={labelClasses}>District</label>
         <select
           className={selectClasses}
-          value={filters.bedrooms}
-          onChange={(e) => onChange({ bedrooms: e.target.value })}
+          value={filters.area}
+          onChange={(e) => onChange({ area: e.target.value })}
         >
-          {bedroomOptions.map((opt) => (
+          <option value="All">All Districts</option>
+          {areas.map((opt) => (
             <option key={opt} value={opt}>
               {opt}
             </option>
@@ -70,22 +73,7 @@ function FilterFields({
         </select>
       </div>
 
-      <div>
-        <label className={labelClasses}>Community</label>
-        <select
-          className={selectClasses}
-          value={filters.community}
-          onChange={(e) => onChange({ community: e.target.value })}
-        >
-          {communityOptions.map((opt) => (
-            <option key={opt} value={opt}>
-              {opt}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div>
+      <div className="lg:col-span-2">
         <label className={labelClasses}>Price Range (AED)</label>
         <div className="flex items-center gap-2">
           <input
@@ -132,10 +120,14 @@ export default function FilterBar({
   filters,
   onChange,
   resultCount,
+  developers,
+  areas,
 }: {
   filters: Filters;
   onChange: (next: Partial<Filters>) => void;
   resultCount: number;
+  developers: string[];
+  areas: string[];
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -144,13 +136,18 @@ export default function FilterBar({
       <div className="mx-auto max-w-7xl px-6 py-5 lg:px-12">
         {/* Desktop filter row */}
         <div className="hidden lg:grid lg:grid-cols-5 lg:gap-4">
-          <FilterFields filters={filters} onChange={onChange} />
+          <FilterFields
+            filters={filters}
+            onChange={onChange}
+            developers={developers}
+            areas={areas}
+          />
         </div>
 
         {/* Mobile trigger */}
         <div className="flex items-center justify-between lg:hidden">
           <p className="text-sm text-muted-foreground">
-            {resultCount} {resultCount === 1 ? "property" : "properties"}
+            {resultCount} {resultCount === 1 ? "project" : "projects"}
           </p>
           <button
             type="button"
@@ -165,10 +162,7 @@ export default function FilterBar({
       {/* Mobile bottom sheet */}
       {mobileOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
-          <div
-            className="absolute inset-0 bg-onyx/50"
-            onClick={() => setMobileOpen(false)}
-          />
+          <div className="absolute inset-0 bg-onyx/50" onClick={() => setMobileOpen(false)} />
           <div className="absolute inset-x-0 bottom-0 max-h-[85vh] overflow-y-auto rounded-t-3xl bg-white p-6 shadow-2xl">
             <div className="flex items-center justify-between">
               <h3 className="font-heading text-lg font-medium text-onyx">Filters</h3>
@@ -182,7 +176,12 @@ export default function FilterBar({
               </button>
             </div>
             <div className="mt-6 space-y-5">
-              <FilterFields filters={filters} onChange={onChange} />
+              <FilterFields
+                filters={filters}
+                onChange={onChange}
+                developers={developers}
+                areas={areas}
+              />
             </div>
             <div className="mt-8 flex gap-3">
               <button
@@ -197,7 +196,7 @@ export default function FilterBar({
                 onClick={() => setMobileOpen(false)}
                 className="flex-1 rounded-lg bg-gold px-6 py-3.5 text-center text-sm font-medium uppercase tracking-widest-luxe text-onyx transition-colors hover:bg-gold-dark"
               >
-                Show {resultCount} {resultCount === 1 ? "Property" : "Properties"}
+                Show {resultCount} {resultCount === 1 ? "Project" : "Projects"}
               </button>
             </div>
           </div>

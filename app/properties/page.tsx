@@ -2,15 +2,27 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import PropertyGrid from "@/components/properties/PropertyGrid";
 import CtaBand from "@/components/properties/CtaBand";
+import { getProjects, getFilterOptions } from "@/lib/properties";
+import { toClientProject } from "@/lib/types";
 import { images } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Properties — Da Reality",
   description:
-    "Browse Da Reality's curated portfolio of ready properties across Dubai's most desirable communities.",
+    "Browse Da Reality's portfolio of new developments from Dubai's leading developers.",
 };
 
-export default function PropertiesPage() {
+// Listings come from the database, so render on demand rather than at build time.
+export const dynamic = "force-dynamic";
+
+export default async function PropertiesPage() {
+  const [allProjects, { developers, areas }] = await Promise.all([
+    getProjects(),
+    getFilterOptions(),
+  ]);
+  // Normalise for the server -> client boundary.
+  const projects = allProjects.map(toClientProject);
+
   return (
     <div>
       <section className="relative flex h-[42vh] min-h-[320px] items-end overflow-hidden bg-onyx">
@@ -30,12 +42,13 @@ export default function PropertiesPage() {
             Explore Our Properties
           </h1>
           <p className="mt-4 max-w-xl text-base leading-relaxed text-alabaster/80">
-            Browse ready properties across Dubai&apos;s most desirable communities.
+            Browse {projects.length} new developments from {developers.length} of Dubai&apos;s
+            leading developers.
           </p>
         </div>
       </section>
 
-      <PropertyGrid />
+      <PropertyGrid projects={projects} developers={developers} areas={areas} />
 
       <CtaBand />
     </div>

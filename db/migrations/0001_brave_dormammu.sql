@@ -1,0 +1,1 @@
+ALTER TABLE "properties" ALTER COLUMN "construction_percent" SET DATA TYPE numeric(5, 2);

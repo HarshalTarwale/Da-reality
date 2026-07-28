@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { formatAed } from "@/components/properties/PropertyCard";
+import { formatAed } from "@/lib/types";
 
 const labelClasses = "text-xs uppercase tracking-widest-luxe text-muted-foreground";
 const inputClasses =
@@ -12,7 +12,8 @@ export default function EnquiryForm({
   price,
 }: {
   propertyTitle: string;
-  price: number;
+  /** null when the developer has not published pricing. */
+  price: number | null;
 }) {
   const [submitted, setSubmitted] = useState(false);
 
@@ -23,8 +24,12 @@ export default function EnquiryForm({
 
   return (
     <div className="rounded-3xl bg-muted p-6 sm:p-8">
-      <p className="text-xs uppercase tracking-widest-luxe text-muted-foreground">Price</p>
-      <p className="mt-1 font-heading text-2xl font-medium text-gold-dark">{formatAed(price)}</p>
+      <p className="text-xs uppercase tracking-widest-luxe text-muted-foreground">
+        {price === null ? "Pricing" : "Starting From"}
+      </p>
+      <p className="mt-1 font-heading text-2xl font-medium text-gold-dark">
+        {price === null ? "On request" : formatAed(price)}
+      </p>
 
       {submitted ? (
         <div className="mt-6">

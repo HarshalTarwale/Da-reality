@@ -1,56 +1,50 @@
+import Image from "next/image";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Gallery from "@/components/properties/Gallery";
-import AmenitiesGrid from "@/components/properties/AmenitiesGrid";
 import EnquiryForm from "@/components/properties/EnquiryForm";
 import MobileEnquiryBar from "@/components/properties/MobileEnquiryBar";
 import SimilarProperties from "@/components/properties/SimilarProperties";
+import UnitBreakdownTable from "@/components/properties/UnitBreakdownTable";
 import CtaBand from "@/components/properties/CtaBand";
-import { formatAed } from "@/components/properties/PropertyCard";
-import type { MockProperty } from "@/components/properties/types";
-import mockProperties from "@/components/properties/mock-properties.json";
+import { getProjectById, getSimilarProjects } from "@/lib/properties";
+import { constructionLabel, formatPriceRange, toClientProject } from "@/lib/types";
 
-const properties = mockProperties as MockProperty[];
+// Listings come from the database, so render on demand rather than at build time.
+export const dynamic = "force-dynamic";
 
-const proximity = [
-  { label: "Dubai Mall", time: "10 min" },
-  { label: "Dubai International Airport", time: "18 min" },
-  { label: "Nearest Metro Station", time: "5 min" },
-  { label: "Beach / Waterfront", time: "12 min" },
-];
-
-function BedIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-5 w-5">
-      <path d="M3 18v-7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M3 18v2M21 18v2M3 13h18" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M6 11V9a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v2M13 11V9a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function BathIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-5 w-5">
-      <path d="M4 12h16v3a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4v-3Z" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M7 12V6a2 2 0 0 1 3.2-1.6M4 19l-1 2M20 19l1 2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function SizeIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-5 w-5">
-      <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function TypeIcon() {
+function UnitsIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-5 w-5">
       <path d="M4 21V9l8-6 8 6v12" strokeLinecap="round" strokeLinejoin="round" />
       <path d="M9 21v-7h6v7" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function LayersIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-5 w-5">
+      <path d="M12 3 3 8l9 5 9-5-9-5Z" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="m3 13 9 5 9-5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function BuildIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-5 w-5">
+      <path d="M3 21h18M6 21V8l6-4 6 4v13" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M10 21v-5h4v5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function CalendarIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-5 w-5">
+      <rect x="3" y="5" width="18" height="16" rx="2" />
+      <path d="M3 10h18M8 3v4M16 3v4" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -83,8 +77,10 @@ function PinIcon() {
   );
 }
 
-export function generateStaticParams() {
-  return properties.map((p) => ({ id: p.id }));
+function formatCompletion(date: Date | null) {
+  if (!date) return "To be announced";
+  const q = Math.floor(date.getUTCMonth() / 3) + 1;
+  return `Q${q} ${date.getUTCFullYear()}`;
 }
 
 export async function generateMetadata({
@@ -93,11 +89,14 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const property = properties.find((p) => p.id === id);
-  if (!property) return {};
+  const project = await getProjectById(id);
+  if (!project) return {};
+
   return {
-    title: `${property.title} — Da Reality`,
-    description: property.description.slice(0, 155),
+    title: `${project.title} — Da Reality`,
+    description: `${project.title} by ${project.developer}${
+      project.area ? ` in ${project.area}` : ""
+    }. ${formatPriceRange(project.priceFrom, project.priceTo)}.`,
   };
 }
 
@@ -107,19 +106,35 @@ export default async function PropertyDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const property = properties.find((p) => p.id === id);
-  if (!property) notFound();
+  const project = await getProjectById(id);
+  if (!project) notFound();
 
-  const similar = properties
-    .filter((p) => p.id !== property.id && (p.property_type === property.property_type || p.area === property.area))
-    .slice(0, 3);
-
-  const mapQuery = encodeURIComponent(`${property.area}, Dubai, UAE`);
+  // Normalise for the server -> client boundary.
+  const similar = (await getSimilarProjects(project, 3)).map(toClientProject);
+  const hasCoords = project.latitude !== null && project.longitude !== null;
+  const mapQuery = hasCoords
+    ? `${project.latitude},${project.longitude}`
+    : encodeURIComponent(`${project.area ?? "Dubai"}, Dubai, UAE`);
+  const enquiryPrice = project.priceFrom && project.priceFrom > 0 ? project.priceFrom : null;
 
   return (
     <div className="pb-24 lg:pb-0">
+      {/* Project imagery, served from the source URLs stored at import time. */}
       <section className="mx-auto max-w-7xl px-6 pt-8 lg:px-12">
-        <Gallery images={property.gallery} title={property.title} />
+        {project.gallery.length > 0 ? (
+          <Gallery images={project.gallery} title={project.title} />
+        ) : (
+          <div className="relative aspect-4/3 w-full overflow-hidden rounded-3xl bg-onyx sm:aspect-video">
+            <Image
+              src={project.displayImage}
+              alt={project.title}
+              fill
+              priority
+              className="object-cover"
+              sizes="(min-width: 1024px) 66vw, 100vw"
+            />
+          </div>
+        )}
       </section>
 
       <section className="mx-auto max-w-7xl px-6 py-12 lg:px-12">
@@ -129,26 +144,29 @@ export default async function PropertyDetailPage({
             <div className="flex items-start justify-between gap-4">
               <div>
                 <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                  <PinIcon /> {property.area}, Dubai
+                  <PinIcon /> {project.area ?? "Dubai"}, Dubai
                 </span>
                 <h1 className="mt-2 font-heading text-3xl font-medium text-onyx sm:text-4xl">
-                  {property.title}
+                  {project.title}
                 </h1>
+                <p className="mt-1 text-sm uppercase tracking-widest-luxe text-gold-dark">
+                  {project.developer}
+                </p>
                 <p className="mt-3 font-heading text-2xl font-medium text-gold-dark">
-                  {formatAed(property.price)}
+                  {formatPriceRange(project.priceFrom, project.priceTo)}
                 </p>
               </div>
               <div className="flex shrink-0 gap-2">
                 <button
                   type="button"
-                  aria-label="Share this property"
+                  aria-label="Share this project"
                   className="flex h-11 w-11 items-center justify-center rounded-full border border-stone text-onyx transition-colors hover:bg-onyx hover:text-alabaster"
                 >
                   <ShareIcon />
                 </button>
                 <button
                   type="button"
-                  aria-label="Save this property"
+                  aria-label="Save this project"
                   className="flex h-11 w-11 items-center justify-center rounded-full border border-stone text-onyx transition-colors hover:bg-onyx hover:text-alabaster"
                 >
                   <HeartIcon />
@@ -158,75 +176,90 @@ export default async function PropertyDetailPage({
 
             <div className="mt-8 flex flex-wrap gap-x-10 gap-y-5 border-y border-stone py-6 text-sm text-onyx">
               <span className="flex items-center gap-2">
-                <BedIcon /> {property.bedrooms === 0 ? "Studio" : `${property.bedrooms} Bedrooms`}
+                <BuildIcon /> {constructionLabel(project.constructionPercent)}
               </span>
               <span className="flex items-center gap-2">
-                <BathIcon /> {property.bathrooms} Bathrooms
+                <CalendarIcon /> {formatCompletion(project.constructionDate)}
               </span>
               <span className="flex items-center gap-2">
-                <SizeIcon /> {property.size_sqft.toLocaleString()} sqft
+                <UnitsIcon /> {project.unitsCount.toLocaleString()} Units
               </span>
-              <span className="flex items-center gap-2">
-                <TypeIcon /> {property.property_type}
-              </span>
+              {project.unitBreakdown && (
+                <span className="flex items-center gap-2">
+                  <LayersIcon /> {Object.keys(project.unitBreakdown).length} Unit Types
+                </span>
+              )}
             </div>
 
-            {/* Description */}
-            <h2 className="mt-10 font-heading text-2xl font-medium text-onyx">
-              About This Property
+            {/* Construction progress */}
+            {project.constructionPercent > 0 && (
+              <div className="mt-8">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-medium text-onyx">Construction Progress</span>
+                  <span className="text-muted-foreground">{project.constructionPercent}%</span>
+                </div>
+                <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-stone">
+                  <div
+                    className="h-full rounded-full bg-gold"
+                    style={{ width: `${Math.min(project.constructionPercent, 100)}%` }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Pricing & unit types */}
+            <h2 className="mt-14 font-heading text-2xl font-medium text-onyx">
+              Pricing &amp; Unit Types
             </h2>
-            <div className="mt-4 space-y-4 text-base leading-relaxed text-muted-foreground">
-              {property.description.split("\n\n").map((paragraph, i) => (
-                <p key={i}>{paragraph}</p>
-              ))}
-            </div>
+            {project.unitBreakdown ? (
+              <div className="mt-6">
+                <UnitBreakdownTable units={project.unitBreakdown} />
+              </div>
+            ) : (
+              <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+                Unit-level pricing for this development has not been published yet. Contact our
+                advisory team for the latest availability.
+              </p>
+            )}
 
-            {/* Amenities */}
-            <h2 className="mt-14 font-heading text-2xl font-medium text-onyx">Amenities</h2>
-            <div className="mt-6">
-              <AmenitiesGrid amenities={property.amenities} />
-            </div>
+            {/*
+              Amenities are intentionally omitted: the Alnair project export carries no
+              amenity data. Add a manually curated list here if one is sourced later.
+            */}
 
             {/* Location */}
             <h2 className="mt-14 font-heading text-2xl font-medium text-onyx">Location</h2>
             <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-              Located in {property.area}, one of Dubai&apos;s most sought-after communities —
-              close to the city&apos;s key landmarks and transport links.
+              {project.title} is located in {project.area ?? "Dubai"}, Dubai.
             </p>
             <div className="mt-6 overflow-hidden rounded-3xl">
               <iframe
-                title={`${property.area} location`}
-                src={`https://www.google.com/maps?q=${mapQuery}&output=embed`}
+                title={`${project.title} location`}
+                src={`https://www.google.com/maps?q=${mapQuery}&z=14&output=embed`}
                 className="h-[340px] w-full border-0"
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
               />
             </div>
-            <ul className="mt-6 space-y-3">
-              {proximity.map((item) => (
-                <li
-                  key={item.label}
-                  className="flex items-center justify-between border-b border-stone pb-3 text-sm"
-                >
-                  <span className="text-onyx">{item.label}</span>
-                  <span className="text-muted-foreground">{item.time}</span>
-                </li>
-              ))}
-            </ul>
+            {hasCoords && (
+              <p className="mt-3 text-xs text-muted-foreground">
+                Coordinates: {project.latitude?.toFixed(5)}, {project.longitude?.toFixed(5)}
+              </p>
+            )}
           </div>
 
           {/* Enquiry sidebar (desktop only) */}
           <div className="hidden lg:block">
             <div className="sticky top-28">
-              <EnquiryForm propertyTitle={property.title} price={property.price} />
+              <EnquiryForm propertyTitle={project.title} price={enquiryPrice} />
             </div>
           </div>
         </div>
       </section>
 
-      <MobileEnquiryBar propertyTitle={property.title} price={property.price} />
+      <MobileEnquiryBar propertyTitle={project.title} price={enquiryPrice} />
 
-      <SimilarProperties properties={similar} />
+      <SimilarProperties projects={similar} />
 
       <CtaBand />
     </div>

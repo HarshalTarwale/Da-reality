@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import EnquiryForm from "@/components/properties/EnquiryForm";
-import { formatAed } from "@/components/properties/PropertyCard";
+import { formatAed } from "@/lib/types";
 
 function CloseIcon() {
   return (
@@ -17,7 +17,8 @@ export default function MobileEnquiryBar({
   price,
 }: {
   propertyTitle: string;
-  price: number;
+  /** null when the developer has not published pricing. */
+  price: number | null;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -25,7 +26,9 @@ export default function MobileEnquiryBar({
     <div className="lg:hidden">
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-stone bg-white px-6 py-4">
         <div className="flex items-center justify-between gap-4">
-          <p className="font-heading text-base font-medium text-onyx">{formatAed(price)}</p>
+          <p className="font-heading text-base font-medium text-onyx">
+            {price === null ? "Price on request" : formatAed(price)}
+          </p>
           <button
             type="button"
             onClick={() => setOpen(true)}
