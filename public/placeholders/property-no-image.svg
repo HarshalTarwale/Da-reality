@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 280" fill="none">
+  <!-- Background -->
+  <rect width="400" height="280" fill="#f9f9f9"/>
+
+  <!-- Subtle grid lines -->
+  <line x1="0" y1="70" x2="400" y2="70" stroke="#e5e7eb" stroke-width="1"/>
+  <line x1="0" y1="140" x2="400" y2="140" stroke="#e5e7eb" stroke-width="1"/>
+  <line x1="0" y1="210" x2="400" y2="210" stroke="#e5e7eb" stroke-width="1"/>
+  <line x1="100" y1="0" x2="100" y2="280" stroke="#e5e7eb" stroke-width="1"/>
+  <line x1="200" y1="0" x2="200" y2="280" stroke="#e5e7eb" stroke-width="1"/>
+  <line x1="300" y1="0" x2="300" y2="280" stroke="#e5e7eb" stroke-width="1"/>
+
+  <!-- Building silhouette group — centred -->
+  <g transform="translate(148, 60)">
+    <!-- Left building -->
+    <rect x="0" y="60" width="32" height="80" fill="#d1d5db" rx="1"/>
+    <!-- Windows left -->
+    <rect x="5" y="68" width="8" height="8" fill="#b89665" rx="1" opacity="0.5"/>
+    <rect x="19" y="68" width="8" height="8" fill="#b89665" rx="1" opacity="0.5"/>
+    <rect x="5" y="84" width="8" height="8" fill="#b89665" rx="1" opacity="0.5"/>
+    <rect x="19" y="84" width="8" height="8" fill="#b89665" rx="1" opacity="0.5"/>
+    <rect x="5" y="100" width="8" height="8" fill="#b89665" rx="1" opacity="0.5"/>
+    <rect x="19" y="100" width="8" height="8" fill="#b89665" rx="1" opacity="0.5"/>
+
+    <!-- Centre tower (tallest) -->
+    <rect x="36" y="0" width="32" height="140" fill="#9ca3af" rx="1"/>
+    <!-- Windows centre -->
+    <rect x="42" y="10" width="8" height="8" fill="#b89665" rx="1" opacity="0.7"/>
+    <rect x="54" y="10" width="8" height="8" fill="#b89665" rx="1" opacity="0.7"/>
+    <rect x="42" y="26" width="8" height="8" fill="#b89665" rx="1" opacity="0.7"/>
+    <rect x="54" y="26" width="8" height="8" fill="#b89665" rx="1" opacity="0.7"/>
+    <rect x="42" y="42" width="8" height="8" fill="#b89665" rx="1" opacity="0.7"/>
+    <rect x="54" y="42" width="8" height="8" fill="#b89665" rx="1" opacity="0.7"/>
+    <rect x="42" y="58" width="8" height="8" fill="#b89665" rx="1" opacity="0.7"/>
+    <rect x="54" y="58" width="8" height="8" fill="#b89665" rx="1" opacity="0.7"/>
+    <rect x="42" y="74" width="8" height="8" fill="#b89665" rx="1" opacity="0.7"/>
+    <rect x="54" y="74" width="8" height="8" fill="#b89665" rx="1" opacity="0.7"/>
+    <!-- Door centre -->
+    <rect x="48" y="116" width="8" height="24" fill="#6b7280" rx="1"/>
+
+    <!-- Right building -->
+    <rect x="72" y="44" width="32" height="96" fill="#d1d5db" rx="1"/>
+    <!-- Windows right -->
+    <rect x="77" y="52" width="8" height="8" fill="#b89665" rx="1" opacity="0.5"/>
+    <rect x="91" y="52" width="8" height="8" fill="#b89665" rx="1" opacity="0.5"/>
+    <rect x="77" y="68" width="8" height="8" fill="#b89665" rx="1" opacity="0.5"/>
+    <rect x="91" y="68" width="8" height="8" fill="#b89665" rx="1" opacity="0.5"/>
+    <rect x="77" y="84" width="8" height="8" fill="#b89665" rx="1" opacity="0.5"/>
+    <rect x="91" y="84" width="8" height="8" fill="#b89665" rx="1" opacity="0.5"/>
+
+    <!-- Ground line -->
+    <line x1="-10" y1="140" x2="114" y2="140" stroke="#e5e7eb" stroke-width="1.5"/>
+  </g>
+
+  <!-- Label -->
+  <text
+    x="200" y="230"
+    text-anchor="middle"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="11"
+    fill="#9ca3af"
+    letter-spacing="5"
+    font-weight="400"
+  >IMAGE COMING SOON</text>
+
+  <!-- Gold accent line -->
+  <line x1="165" y1="242" x2="235" y2="242" stroke="#b89665" stroke-width="1" opacity="0.6"/>
+</svg>

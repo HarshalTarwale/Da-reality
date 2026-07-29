@@ -3,17 +3,16 @@ import Link from "next/link";
 import { logo, contact } from "@/lib/data";
 
 const companyLinks = [
-  { label: "About", href: "/#about" },
+  { label: "About", href: "/about" },
   { label: "Why Choose Us", href: "/#why-choose-us" },
   { label: "Our Location", href: "/#location" },
-  { label: "Contact", href: "/#contact" },
+  { label: "Contact", href: "/contact" },
 ];
 
 const propertyLinks = [
-  { label: "Featured Listings", href: "/#listings" },
+  { label: "Featured Listings", href: "/properties" },
   { label: "New Developments", href: "/#developments" },
-  { label: "Featured Areas", href: "/#areas" },
-  { label: "Top Developers", href: "/#developers" },
+  { label: "Developers", href: "/developers" },
 ];
 
 export default function Footer() {

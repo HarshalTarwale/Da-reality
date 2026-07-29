@@ -36,16 +36,16 @@ function LayersIcon() {
 
 export default function PropertyCard({ project }: { project: ClientProject }) {
   const unitTypeCount = project.unitBreakdown ? Object.keys(project.unitBreakdown).length : 0;
+  // displayImage is already resolved by toProject():
+  //   - real image URL when gallery has > 1 photo
+  //   - /placeholders/property-no-image.svg for Alnair coming-soon stubs
+  const imageSrc = project.displayImage;
 
   return (
     <div className="flex w-full flex-col overflow-hidden rounded-2xl border border-stone-300 bg-white">
       <div className="relative aspect-4/3 overflow-hidden rounded-t-2xl bg-muted">
-        {/*
-          Project cover image, served from the source URL captured at import.
-          Falls back to a local placeholder when the source has no imagery.
-        */}
         <Image
-          src={project.displayImage}
+          src={imageSrc}
           alt={project.title}
           fill
           className="object-cover"

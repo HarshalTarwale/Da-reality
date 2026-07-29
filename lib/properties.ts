@@ -1,10 +1,19 @@
-import { and, asc, desc, eq, gte, lte, ne, or, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gte, lte, ne, or, sql, count } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { properties } from "@/db/schema";
 import type { Project } from "@/lib/types";
 
 /** Drizzle row -> Project (numeric/bigint columns arrive as strings). */
 function toProject(row: typeof properties.$inferSelect): Project {
+  const gallery = row.gallery ?? [];
+  // Properties with exactly 1 gallery image are Alnair "coming soon" placeholders —
+  // the CDN hosts a placeholder photo rather than a real project render.
+  // Replace with our branded SVG so the UI stays consistent.
+  const hasRealImage = gallery.length > 1;
+  const displayImage = hasRealImage
+    ? row.displayImage
+    : "/placeholders/property-no-image.svg";
+
   return {
     id: row.id,
     slug: row.slug,
@@ -20,8 +29,8 @@ function toProject(row: typeof properties.$inferSelect): Project {
     unitsCount: row.unitsCount,
     unitBreakdown: (row.unitBreakdown as Project["unitBreakdown"]) ?? null,
     sourceImageUrl: row.sourceImageUrl,
-    gallery: row.gallery ?? [],
-    displayImage: row.displayImage,
+    gallery,
+    displayImage,
     sourceId: row.sourceId,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
@@ -53,14 +62,17 @@ export async function getProjects(filters: ProjectFilters = {}) {
     where.push(and(lte(properties.priceFrom, filters.maxPrice), ne(properties.priceFrom, 0)));
   }
 
+  // Placeholder-only properties (gallery <= 1 image) always sort last.
+  const noImageLast = sql`case when cardinality(${properties.gallery}) <= 1 then 1 else 0 end`;
+
   // Unpriced projects (price_from = 0 upstream) always sort last, in both
   // directions — Postgres would otherwise place NULLs first on DESC.
   const orderBy =
     filters.sort === "price-asc"
-      ? [sql`nullif(${properties.priceFrom}, 0) asc nulls last`]
+      ? [noImageLast, sql`nullif(${properties.priceFrom}, 0) asc nulls last`]
       : filters.sort === "price-desc"
-        ? [sql`nullif(${properties.priceFrom}, 0) desc nulls last`]
-        : [desc(properties.createdAt), asc(properties.title)];
+        ? [noImageLast, sql`nullif(${properties.priceFrom}, 0) desc nulls last`]
+        : [noImageLast, desc(properties.createdAt), asc(properties.title)];
 
   const rows = await db
     .select()
@@ -114,4 +126,41 @@ export async function getFilterOptions() {
     developers: devs.map((d) => d.value).filter(Boolean) as string[],
     areas: areas.map((a) => a.value).filter(Boolean) as string[],
   };
+}
+
+/** Developer name + how many projects they have + one representative cover image. */
+export async function getDeveloperStats() {
+  const rows = await db
+    .select({
+      developer: properties.developer,
+      count: count(),
+      // Pick the first real image for this developer (skip placeholder SVGs)
+      image: sql<string>`(
+        SELECT display_image FROM properties p2
+        WHERE p2.developer = properties.developer
+          AND p2.display_image NOT LIKE '%placeholder%'
+        LIMIT 1
+      )`,
+    })
+    .from(properties)
+    .groupBy(properties.developer)
+    .orderBy(asc(properties.developer));
+
+  return rows as { developer: string; count: number; image: string | null }[];
+}
+
+/** All projects for a specific developer. */
+export async function getProjectsByDeveloper(developer: string) {
+  const rows = await db
+    .select()
+    .from(properties)
+    .where(eq(properties.developer, developer))
+    // Placeholder-only cards (gallery <= 1) sort last.
+    .orderBy(
+      sql`case when cardinality(${properties.gallery}) <= 1 then 1 else 0 end`,
+      desc(properties.createdAt),
+      asc(properties.title),
+    );
+
+  return rows.map(toProject);
 }

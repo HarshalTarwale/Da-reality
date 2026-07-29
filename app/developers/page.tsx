@@ -1,34 +1,27 @@
 import Image from "next/image";
 import type { Metadata } from "next";
-import PropertyGrid from "@/components/properties/PropertyGrid";
-import CtaBand from "@/components/properties/CtaBand";
-import { getProjects, getFilterOptions } from "@/lib/properties";
-import { toClientProject } from "@/lib/types";
+import DeveloperCard from "@/components/developers/DeveloperCard";
+import { getDeveloperStats } from "@/lib/properties";
 import { images } from "@/lib/data";
 
 export const metadata: Metadata = {
-  title: "Properties — Da Reality",
+  title: "Developers — Da Reality",
   description:
-    "Browse Da Reality's portfolio of new developments from Dubai's leading developers.",
+    "Browse Dubai's top property developers. Explore projects by EMAAR, DAMAC, NAKHEEL, SOBHA, MERAAS, OMNIYAT and more.",
 };
 
-// Listings come from the database, so render on demand rather than at build time.
 export const dynamic = "force-dynamic";
 
-export default async function PropertiesPage() {
-  const [allProjects, { developers, areas }] = await Promise.all([
-    getProjects(),
-    getFilterOptions(),
-  ]);
-  // Normalise for the server -> client boundary.
-  const projects = allProjects.map(toClientProject);
+export default async function DevelopersPage() {
+  const developers = await getDeveloperStats();
 
   return (
     <div>
+      {/* Page Header */}
       <section className="relative flex h-[42vh] min-h-[320px] items-center overflow-hidden bg-onyx">
         <Image
           src={images.downtownSkyline}
-          alt="Dubai skyline — Da Reality properties"
+          alt="Dubai skyline — Da Reality developers"
           fill
           priority
           className="object-cover opacity-80"
@@ -39,18 +32,28 @@ export default async function PropertiesPage() {
             Portfolio
           </p>
           <h1 className="mt-3 font-heading text-4xl font-medium leading-tight text-alabaster sm:text-5xl">
-            Explore Our Properties
+            Developers
           </h1>
           <p className="mt-4 max-w-xl text-base leading-relaxed text-alabaster/80">
-            Browse {projects.length} new developments from {developers.length} of Dubai&apos;s
-            leading developers.
+            Explore projects from {developers.length} of Dubai&apos;s leading
+            property developers.
           </p>
         </div>
       </section>
 
-      <PropertyGrid projects={projects} developers={developers} areas={areas} />
-
-      <CtaBand />
+      {/* Developer Grid */}
+      <section className="mx-auto max-w-7xl px-6 py-20 lg:px-12">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {developers.map((item) => (
+            <DeveloperCard
+              key={item.developer}
+              developer={item.developer}
+              count={item.count}
+              image={item.image}
+            />
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

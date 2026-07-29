@@ -10,7 +10,7 @@ const navLinks = [
   { label: "Home", href: "/" },
   { label: "Property", href: "/properties" },
   { label: "About", href: "/about" },
-  { label: "Explore", href: "/properties#areas" },
+  { label: "Developers", href: "/developers" },
 ];
 
 function isActive(pathname: string, href: string) {
@@ -43,8 +43,8 @@ export default function Header() {
               key={link.href}
               href={link.href}
               aria-current={isActive(pathname, link.href) ? "page" : undefined}
-              className={`text-sm font-medium uppercase tracking-widest-luxe transition-colors hover:text-gold ${
-                isActive(pathname, link.href) ? "text-gold" : "text-onyx/80"
+              className={`text-sm font-medium uppercase tracking-widest-luxe text-onyx/80 transition-all hover:underline hover:decoration-onyx hover:underline-offset-4 ${
+                isActive(pathname, link.href) ? "underline decoration-onyx underline-offset-4" : ""
               }`}
             >
               {link.label}
@@ -54,7 +54,7 @@ export default function Header() {
 
         <Link
           href="/#contact"
-          className="hidden rounded-full bg-onyx px-7 py-3 text-sm font-medium uppercase tracking-widest-luxe text-alabaster transition-colors hover:bg-onyx/85 md:inline-block"
+          className="hidden rounded-lg bg-onyx px-7 py-3 text-sm font-medium uppercase tracking-widest-luxe text-alabaster transition-colors hover:bg-onyx/85 md:inline-block"
         >
           Contact
         </Link>
@@ -78,8 +78,8 @@ export default function Header() {
               href={link.href}
               onClick={() => setOpen(false)}
               aria-current={isActive(pathname, link.href) ? "page" : undefined}
-              className={`py-2 text-sm font-medium uppercase tracking-widest-luxe ${
-                isActive(pathname, link.href) ? "text-gold" : "text-onyx/80"
+              className={`py-2 text-sm font-medium uppercase tracking-widest-luxe text-onyx/80 ${
+                isActive(pathname, link.href) ? "underline decoration-onyx underline-offset-4" : ""
               }`}
             >
               {link.label}
@@ -88,7 +88,7 @@ export default function Header() {
           <Link
             href="/#contact"
             onClick={() => setOpen(false)}
-            className="mt-2 rounded-full bg-onyx px-6 py-3 text-center text-sm font-medium uppercase tracking-widest-luxe text-alabaster"
+            className="mt-2 rounded-lg bg-onyx px-6 py-3 text-center text-sm font-medium uppercase tracking-widest-luxe text-alabaster"
           >
             Contact
           </Link>
