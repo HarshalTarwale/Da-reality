@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import SectionHeading from "@/components/SectionHeading";
@@ -7,11 +8,15 @@ import ContactForm from "@/components/ContactForm";
 import ContactInfoRow from "@/components/ContactInfoRow";
 import Faq from "@/components/Faq";
 import FeaturedListings from "@/components/FeaturedListings";
-import DevelopmentsCarousel from "@/components/DevelopmentsCarousel";
+import FeaturedListingsSkeleton from "@/components/FeaturedListingsSkeleton";
+import DevelopmentsSection from "@/components/DevelopmentsSection";
+import DevelopmentsSectionSkeleton from "@/components/DevelopmentsSectionSkeleton";
 import { images, pillars, developers } from "@/lib/data";
 
-// Featured listings are read from the database, so render on demand.
-export const dynamic = "force-dynamic";
+// Featured listings come from the database, but the catalog only changes when
+// the import script runs — cache the page and refresh it in the background
+// every 5 minutes instead of hitting Neon on every single visit.
+export const revalidate = 300;
 
 export default function Home() {
 
@@ -145,9 +150,13 @@ export default function Home() {
       </section>
       */}
 
-      <FeaturedListings />
+      <Suspense fallback={<FeaturedListingsSkeleton />}>
+        <FeaturedListings />
+      </Suspense>
 
-      <DevelopmentsCarousel />
+      <Suspense fallback={<DevelopmentsSectionSkeleton />}>
+        <DevelopmentsSection />
+      </Suspense>
 
       <WhyChooseUs />
       <LocationSection />

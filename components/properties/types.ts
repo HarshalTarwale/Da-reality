@@ -10,6 +10,7 @@ export type SortOption = (typeof sortOptions)[number];
  * having one bedroom count. Unit types are surfaced on the card instead.
  */
 export type Filters = {
+  search: string;
   developer: string;
   area: string;
   minPrice: string;
@@ -18,6 +19,7 @@ export type Filters = {
 };
 
 export const defaultFilters: Filters = {
+  search: "",
   developer: "All",
   area: "All",
   minPrice: "",

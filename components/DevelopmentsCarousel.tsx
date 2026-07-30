@@ -3,15 +3,16 @@
 import SectionHeading from "@/components/SectionHeading";
 import DevelopmentCard from "@/components/DevelopmentCard";
 import { CarouselArrows, CarouselTrack, useCarouselRef } from "@/components/Carousel";
-import { developments } from "@/lib/data";
+import type { ProjectCardData } from "@/lib/types";
 
 /**
- * Client component: the carousel needs a ref + scroll handlers.
- * Kept separate so the Home page itself can stay a server component
- * and query the database directly.
+ * Client component: the carousel needs a ref + scroll handlers, so data is
+ * fetched by the server-component wrapper (DevelopmentsSection) and passed in.
  */
-export default function DevelopmentsCarousel() {
+export default function DevelopmentsCarousel({ projects }: { projects: ProjectCardData[] }) {
   const developmentsRef = useCarouselRef();
+
+  if (projects.length === 0) return null;
 
   return (
     <section id="developments" className="bg-muted py-24">
@@ -19,13 +20,13 @@ export default function DevelopmentsCarousel() {
         <SectionHeading
           eyebrow="Off-Plan"
           title="New Developments"
-          description="Exclusive early access to the city's most anticipated off-plan launches — at preferred pricing before public release."
+          description="The newest launches to hit the market — early access at preferred pricing before public release."
           actions={<CarouselArrows targetRef={developmentsRef} />}
         />
         <div className="mt-10">
           <CarouselTrack targetRef={developmentsRef}>
-            {developments.map((dev) => (
-              <DevelopmentCard key={dev.id} development={dev} />
+            {projects.map((project) => (
+              <DevelopmentCard key={project.id} project={project} />
             ))}
           </CarouselTrack>
         </div>

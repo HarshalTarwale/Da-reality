@@ -10,7 +10,9 @@ export const metadata: Metadata = {
     "Browse Dubai's top property developers. Explore projects by EMAAR, DAMAC, NAKHEEL, SOBHA, MERAAS, OMNIYAT and more.",
 };
 
-export const dynamic = "force-dynamic";
+// The catalog only changes when the import script runs — cache and refresh
+// in the background every 5 minutes instead of querying Neon on every visit.
+export const revalidate = 300;
 
 export default async function DevelopersPage() {
   const developers = await getDeveloperStats();

@@ -24,38 +24,77 @@ function CloseIcon() {
   );
 }
 
+function SearchIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="h-4 w-4">
+      <circle cx="10.5" cy="10.5" r="6.5" />
+      <path d="m20 20-4.35-4.35" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 const selectClasses =
   "w-full rounded-lg border border-stone bg-white px-4 py-3 text-sm text-onyx outline-none transition-colors focus:border-gold";
 const labelClasses = "mb-1.5 block text-xs font-medium uppercase tracking-widest-luxe text-muted-foreground";
+
+function SearchField({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (next: Partial<Filters>) => void;
+}) {
+  return (
+    <div>
+      <label className={labelClasses}>Search</label>
+      <div className="relative">
+        <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">
+          <SearchIcon />
+        </span>
+        <input
+          type="text"
+          placeholder="Search by property name..."
+          className={`${selectClasses} pl-11`}
+          value={value}
+          onChange={(e) => onChange({ search: e.target.value })}
+        />
+      </div>
+    </div>
+  );
+}
 
 function FilterFields({
   filters,
   onChange,
   developers,
   areas,
+  showDeveloperFilter,
 }: {
   filters: Filters;
   onChange: (next: Partial<Filters>) => void;
   developers: string[];
   areas: string[];
+  showDeveloperFilter: boolean;
 }) {
   return (
     <>
-      <div>
-        <label className={labelClasses}>Developer</label>
-        <select
-          className={selectClasses}
-          value={filters.developer}
-          onChange={(e) => onChange({ developer: e.target.value })}
-        >
-          <option value="All">All Developers</option>
-          {developers.map((opt) => (
-            <option key={opt} value={opt}>
-              {opt}
-            </option>
-          ))}
-        </select>
-      </div>
+      {showDeveloperFilter && (
+        <div>
+          <label className={labelClasses}>Developer</label>
+          <select
+            className={selectClasses}
+            value={filters.developer}
+            onChange={(e) => onChange({ developer: e.target.value })}
+          >
+            <option value="All">All Developers</option>
+            {developers.map((opt) => (
+              <option key={opt} value={opt}>
+                {opt}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       <div>
         <label className={labelClasses}>District</label>
@@ -122,12 +161,15 @@ export default function FilterBar({
   resultCount,
   developers,
   areas,
+  showDeveloperFilter = true,
 }: {
   filters: Filters;
   onChange: (next: Partial<Filters>) => void;
   resultCount: number;
   developers: string[];
   areas: string[];
+  /** Hide the Developer dropdown when the page is already scoped to one developer. */
+  showDeveloperFilter?: boolean;
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -135,28 +177,53 @@ export default function FilterBar({
     <div className="border-b border-stone bg-white lg:sticky lg:top-20 lg:z-40">
       <div className="mx-auto max-w-7xl px-6 py-5 lg:px-12">
         {/* Desktop filter row */}
-        <div className="hidden lg:grid lg:grid-cols-5 lg:gap-4">
-          <FilterFields
-            filters={filters}
-            onChange={onChange}
-            developers={developers}
-            areas={areas}
-          />
+        <div className="hidden lg:block">
+          <div className="lg:max-w-md">
+            <SearchField value={filters.search} onChange={onChange} />
+          </div>
+          <div
+            className={`mt-4 grid gap-4 ${
+              showDeveloperFilter ? "lg:grid-cols-5" : "lg:grid-cols-4"
+            }`}
+          >
+            <FilterFields
+              filters={filters}
+              onChange={onChange}
+              developers={developers}
+              areas={areas}
+              showDeveloperFilter={showDeveloperFilter}
+            />
+          </div>
         </div>
 
         {/* Mobile trigger */}
-        <div className="flex items-center justify-between lg:hidden">
-          <p className="text-sm text-muted-foreground">
-            {resultCount} {resultCount === 1 ? "project" : "projects"}
-          </p>
+        <div className="flex items-center gap-3 lg:hidden">
+          <div className="flex-1">
+            <div className="relative">
+              <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">
+                <SearchIcon />
+              </span>
+              <input
+                type="text"
+                placeholder="Search by property name..."
+                className={`${selectClasses} pl-11`}
+                value={filters.search}
+                onChange={(e) => onChange({ search: e.target.value })}
+              />
+            </div>
+          </div>
           <button
             type="button"
             onClick={() => setMobileOpen(true)}
-            className="flex items-center gap-2 rounded-lg border border-onyx px-5 py-2.5 text-xs font-medium uppercase tracking-widest-luxe text-onyx"
+            aria-label="Open filters"
+            className="flex h-11.5 shrink-0 items-center gap-2 rounded-lg border border-onyx px-5 text-xs font-medium uppercase tracking-widest-luxe text-onyx"
           >
             <FilterIcon /> Filters
           </button>
         </div>
+        <p className="mt-3 text-sm text-muted-foreground lg:hidden">
+          {resultCount} {resultCount === 1 ? "project" : "projects"}
+        </p>
       </div>
 
       {/* Mobile bottom sheet */}
@@ -181,6 +248,7 @@ export default function FilterBar({
                 onChange={onChange}
                 developers={developers}
                 areas={areas}
+                showDeveloperFilter={showDeveloperFilter}
               />
             </div>
             <div className="mt-8 flex gap-3">

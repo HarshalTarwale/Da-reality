@@ -2,14 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import SectionHeading from "@/components/SectionHeading";
-import PropertyCard from "@/components/properties/PropertyCard";
+import PropertyGrid from "@/components/properties/PropertyGrid";
 import CtaBand from "@/components/properties/CtaBand";
-import { getProjectsByDeveloper } from "@/lib/properties";
-import { toClientProject } from "@/lib/types";
+import { getProjects, getFilterOptions } from "@/lib/properties";
 import { images } from "@/lib/data";
 
-export const dynamic = "force-dynamic";
+// Cache and refresh in the background every 5 minutes instead of querying
+// Neon on every single visit.
+export const revalidate = 300;
 
 export async function generateMetadata({
   params,
@@ -32,14 +32,17 @@ export default async function DeveloperDetailPage({
   const { developer } = await params;
   const name = decodeURIComponent(developer);
 
-  const allProjects = await getProjectsByDeveloper(name);
+  const [allProjects, { developers, areas }] = await Promise.all([
+    getProjects(),
+    getFilterOptions(),
+  ]);
 
-  // If developer doesn't exist in DB, return 404
-  if (allProjects.length === 0) {
+  // If the developer doesn't exist in the catalog at all, 404.
+  if (!developers.includes(name)) {
     notFound();
   }
 
-  const projects = allProjects.map(toClientProject);
+  const developerProjectCount = allProjects.filter((p) => p.developer === name).length;
 
   return (
     <div>
@@ -65,27 +68,18 @@ export default async function DeveloperDetailPage({
             {name}
           </h1>
           <p className="mt-4 text-base leading-relaxed text-alabaster/80">
-            {projects.length} {projects.length === 1 ? "project" : "projects"} available
+            {developerProjectCount} {developerProjectCount === 1 ? "project" : "projects"}{" "}
+            available — search, filter, or browse every development in our portfolio.
           </p>
         </div>
       </section>
 
-      {/* Projects Grid */}
-      <section className="mx-auto max-w-7xl px-6 py-20 lg:px-12">
-        <SectionHeading
-          eyebrow={name}
-          title="All Projects"
-          description={`Explore every development by ${name} in our portfolio.`}
-        />
-        <p className="mt-2 text-sm text-muted-foreground">
-          Showing {projects.length} {projects.length === 1 ? "project" : "projects"}
-        </p>
-        <div className="mt-8 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project) => (
-            <PropertyCard key={project.id} project={project} />
-          ))}
-        </div>
-      </section>
+      <PropertyGrid
+        projects={allProjects}
+        developers={developers}
+        areas={areas}
+        initialFilters={{ developer: name }}
+      />
 
       <CtaBand />
     </div>

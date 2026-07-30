@@ -4,7 +4,7 @@ import {
   constructionLabel,
   formatPriceRange,
   unitTypeLabel,
-  type ClientProject,
+  type ProjectCardData,
 } from "@/lib/types";
 
 function PinIcon() {
@@ -34,10 +34,10 @@ function LayersIcon() {
   );
 }
 
-export default function PropertyCard({ project }: { project: ClientProject }) {
-  const unitTypeCount = project.unitBreakdown ? Object.keys(project.unitBreakdown).length : 0;
-  // displayImage is already resolved by toProject():
-  //   - real image URL when gallery has > 1 photo
+export default function PropertyCard({ project }: { project: ProjectCardData }) {
+  const unitTypeCount = project.unitTypeCodes.length;
+  // displayImage is already resolved by the query layer:
+  //   - real image URL when the source has real photography
   //   - /placeholders/property-no-image.svg for Alnair coming-soon stubs
   const imageSrc = project.displayImage;
 
@@ -80,7 +80,8 @@ export default function PropertyCard({ project }: { project: ClientProject }) {
         </div>
         {unitTypeCount > 0 && (
           <div className="mt-3 flex flex-wrap gap-1.5">
-            {Object.keys(project.unitBreakdown ?? {})
+            {project.unitTypeCodes
+              .slice()
               .sort()
               .slice(0, 4)
               .map((code) => (

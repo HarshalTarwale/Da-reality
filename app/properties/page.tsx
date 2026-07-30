@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import PropertyGrid from "@/components/properties/PropertyGrid";
 import CtaBand from "@/components/properties/CtaBand";
 import { getProjects, getFilterOptions } from "@/lib/properties";
-import { toClientProject } from "@/lib/types";
 import { images } from "@/lib/data";
 
 export const metadata: Metadata = {
@@ -12,16 +11,17 @@ export const metadata: Metadata = {
     "Browse Da Reality's portfolio of new developments from Dubai's leading developers.",
 };
 
-// Listings come from the database, so render on demand rather than at build time.
-export const dynamic = "force-dynamic";
+// The catalog only changes when the import script runs, so cache this page
+// and refresh it in the background every 5 minutes rather than querying
+// Neon on every visit.
+export const revalidate = 300;
 
 export default async function PropertiesPage() {
-  const [allProjects, { developers, areas }] = await Promise.all([
+  // getProjects() already returns the lean, client-safe card shape.
+  const [projects, { developers, areas }] = await Promise.all([
     getProjects(),
     getFilterOptions(),
   ]);
-  // Normalise for the server -> client boundary.
-  const projects = allProjects.map(toClientProject);
 
   return (
     <div>

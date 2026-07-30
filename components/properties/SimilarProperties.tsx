@@ -1,7 +1,7 @@
 import PropertyCard from "@/components/properties/PropertyCard";
-import type { ClientProject } from "@/lib/types";
+import type { ProjectCardData } from "@/lib/types";
 
-export default function SimilarProperties({ projects }: { projects: ClientProject[] }) {
+export default function SimilarProperties({ projects }: { projects: ProjectCardData[] }) {
   if (projects.length === 0) return null;
 
   return (

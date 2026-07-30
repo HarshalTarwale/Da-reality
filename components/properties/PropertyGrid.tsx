@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import FilterBar from "@/components/properties/FilterBar";
 import PropertyCard from "@/components/properties/PropertyCard";
 import { defaultFilters, type Filters } from "@/components/properties/types";
-import type { ClientProject } from "@/lib/types";
+import type { ProjectCardData } from "@/lib/types";
 
 const PAGE_SIZE = 12;
 
@@ -18,15 +18,17 @@ function SearchOffIcon() {
 }
 
 /** Zero upstream means "price not published", so treat it as unknown. */
-function effectivePrice(project: ClientProject) {
+function effectivePrice(project: ProjectCardData) {
   return project.priceFrom && project.priceFrom > 0 ? project.priceFrom : null;
 }
 
-function applyFilters(projects: ClientProject[], filters: Filters) {
+function applyFilters(projects: ProjectCardData[], filters: Filters) {
   const min = filters.minPrice ? Number(filters.minPrice) : undefined;
   const max = filters.maxPrice ? Number(filters.maxPrice) : undefined;
+  const query = filters.search.trim().toLowerCase();
 
   const filtered = projects.filter((p) => {
+    if (query && !p.title.toLowerCase().includes(query)) return false;
     if (filters.developer !== "All" && p.developer !== filters.developer) return false;
     if (filters.area !== "All" && p.area !== filters.area) return false;
 
@@ -50,12 +52,17 @@ export default function PropertyGrid({
   projects,
   developers,
   areas,
+  initialFilters,
+  showDeveloperFilter = true,
 }: {
-  projects: ClientProject[];
+  projects: ProjectCardData[];
   developers: string[];
   areas: string[];
+  /** e.g. { developer: "Emaar Properties" } to pre-scope a developer's own page. */
+  initialFilters?: Partial<Filters>;
+  showDeveloperFilter?: boolean;
 }) {
-  const [filters, setFilters] = useState<Filters>(defaultFilters);
+  const [filters, setFilters] = useState<Filters>({ ...defaultFilters, ...initialFilters });
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   const results = useMemo(() => applyFilters(projects, filters), [projects, filters]);
@@ -66,7 +73,7 @@ export default function PropertyGrid({
   }
 
   function handleReset() {
-    setFilters(defaultFilters);
+    setFilters({ ...defaultFilters, ...initialFilters });
     setVisibleCount(PAGE_SIZE);
   }
 
@@ -81,6 +88,7 @@ export default function PropertyGrid({
         resultCount={results.length}
         developers={developers}
         areas={areas}
+        showDeveloperFilter={showDeveloperFilter}
       />
 
       <section className="mx-auto max-w-7xl px-6 py-16 lg:px-12">

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { Development } from "@/lib/data";
+import { formatPriceRange, type ProjectCardData } from "@/lib/types";
 
 function PinIcon() {
   return (
@@ -11,13 +11,13 @@ function PinIcon() {
   );
 }
 
-export default function DevelopmentCard({ development }: { development: Development }) {
+export default function DevelopmentCard({ project }: { project: ProjectCardData }) {
   return (
     <div className="relative flex w-[85vw] shrink-0 snap-start flex-col overflow-hidden rounded-2xl border border-stone-300 sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
       <div className="relative aspect-3/4 w-full">
         <Image
-          src={development.image}
-          alt={development.title}
+          src={project.displayImage}
+          alt={project.title}
           fill
           className="object-cover"
           sizes="(min-width: 640px) 420px, 340px"
@@ -29,12 +29,10 @@ export default function DevelopmentCard({ development }: { development: Developm
 
         <div className="absolute inset-x-0 bottom-0 p-6 text-alabaster">
           <span className="flex items-center gap-1 text-sm text-alabaster/80">
-            <PinIcon /> {development.area}
+            <PinIcon /> {project.area ?? "Dubai"}
           </span>
-          <h3 className="mt-2 font-heading text-2xl font-medium">
-            {development.title}
-          </h3>
-          <p className="mt-1 text-sm text-alabaster/70">By {development.developer}</p>
+          <h3 className="mt-2 font-heading text-2xl font-medium">{project.title}</h3>
+          <p className="mt-1 text-sm text-alabaster/70">By {project.developer}</p>
 
           <div className="mt-5 flex items-end justify-between gap-4">
             <div>
@@ -42,14 +40,14 @@ export default function DevelopmentCard({ development }: { development: Developm
                 Starting From
               </p>
               <p className="mt-1 font-heading text-lg font-medium">
-                From {development.price}
+                {formatPriceRange(project.priceFrom, project.priceTo)}
               </p>
             </div>
             <Link
-              href="/#contact"
+              href={`/properties/${project.id}`}
               className="flex shrink-0 items-center gap-1.5 rounded-lg bg-white px-5 py-3 text-xs font-medium uppercase tracking-widest-luxe text-onyx transition-colors hover:bg-alabaster"
             >
-              Enquire →
+              View →
             </Link>
           </div>
         </div>

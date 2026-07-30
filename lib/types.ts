@@ -51,6 +51,19 @@ export function toClientProject(project: Project): ClientProject {
   return project;
 }
 
+/**
+ * Everything PropertyCard actually renders — no `gallery` array, and
+ * `unitBreakdown` reduced to just the type codes it lists (not the full
+ * price/area stats per unit type, which only the detail page needs).
+ *
+ * Listing pages ("/", "/properties", "/developers/[developer]") can return
+ * hundreds of these; keeping this shape lean cuts that payload dramatically
+ * versus shipping full Project rows for cards that never read most fields.
+ */
+export type ProjectCardData = Omit<Project, "gallery" | "unitBreakdown" | "sourceImageUrl"> & {
+  unitTypeCodes: string[];
+};
+
 export function formatAed(price: number) {
   return `AED ${price.toLocaleString("en-US")}`;
 }

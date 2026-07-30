@@ -8,10 +8,11 @@ import SimilarProperties from "@/components/properties/SimilarProperties";
 import UnitBreakdownTable from "@/components/properties/UnitBreakdownTable";
 import CtaBand from "@/components/properties/CtaBand";
 import { getProjectById, getSimilarProjects } from "@/lib/properties";
-import { constructionLabel, formatPriceRange, toClientProject } from "@/lib/types";
+import { constructionLabel, formatPriceRange } from "@/lib/types";
 
-// Listings come from the database, so render on demand rather than at build time.
-export const dynamic = "force-dynamic";
+// Cache each project page and refresh it in the background every 5 minutes,
+// instead of querying Neon on every single visit.
+export const revalidate = 300;
 
 function UnitsIcon() {
   return (
@@ -109,8 +110,8 @@ export default async function PropertyDetailPage({
   const project = await getProjectById(id);
   if (!project) notFound();
 
-  // Normalise for the server -> client boundary.
-  const similar = (await getSimilarProjects(project, 3)).map(toClientProject);
+  // getSimilarProjects() already returns the lean, client-safe card shape.
+  const similar = await getSimilarProjects(project, 3);
   const hasCoords = project.latitude !== null && project.longitude !== null;
   const mapQuery = hasCoords
     ? `${project.latitude},${project.longitude}`
