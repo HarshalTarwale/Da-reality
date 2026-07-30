@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, gte, lte, ne, or, sql, count } from "drizzle-orm";
+import { and, asc, desc, eq, gte, lte, ne, or, sql, count, type SQL } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { properties } from "@/db/schema";
 import type { Project, ProjectCardData } from "@/lib/types";
@@ -123,7 +123,7 @@ export type ProjectFilters = {
 };
 
 export async function getProjects(filters: ProjectFilters = {}) {
-  const where = [];
+  const where: SQL<unknown>[] = [eq(properties.isHidden, false)];
 
   if (filters.developer && filters.developer !== "All") {
     where.push(eq(properties.developer, filters.developer));
@@ -133,10 +133,10 @@ export async function getProjects(filters: ProjectFilters = {}) {
   }
   // Zero means "price not published" upstream, so exclude those from price filtering.
   if (filters.minPrice !== undefined) {
-    where.push(and(gte(properties.priceFrom, filters.minPrice), ne(properties.priceFrom, 0)));
+    where.push(gte(properties.priceFrom, filters.minPrice), ne(properties.priceFrom, 0));
   }
   if (filters.maxPrice !== undefined) {
-    where.push(and(lte(properties.priceFrom, filters.maxPrice), ne(properties.priceFrom, 0)));
+    where.push(lte(properties.priceFrom, filters.maxPrice), ne(properties.priceFrom, 0));
   }
 
   // Placeholder-only properties (gallery <= 1 image) always sort last.
@@ -187,7 +187,7 @@ export async function getSimilarProjects(
   const rows = await db
     .select(cardColumns)
     .from(properties)
-    .where(and(ne(properties.id, project.id), or(...matches)))
+    .where(and(eq(properties.isHidden, false), ne(properties.id, project.id), or(...matches)))
     .orderBy(desc(properties.createdAt))
     .limit(limit);
 
@@ -206,6 +206,7 @@ export async function getFeaturedFromTopDevelopers(developerCount = 5, perDevelo
   const topDevelopers = await db
     .select({ developer: properties.developer, count: count() })
     .from(properties)
+    .where(eq(properties.isHidden, false))
     .groupBy(properties.developer)
     .orderBy(desc(count()))
     .limit(developerCount);
@@ -215,7 +216,7 @@ export async function getFeaturedFromTopDevelopers(developerCount = 5, perDevelo
       db
         .select(cardColumns)
         .from(properties)
-        .where(eq(properties.developer, developer))
+        .where(and(eq(properties.isHidden, false), eq(properties.developer, developer)))
         .orderBy(
           sql`case when ${properties.priceFrom} > 0 then 0 else 1 end`,
           sql`case when cardinality(${properties.gallery}) > 1 then 0 else 1 end`,
@@ -246,7 +247,7 @@ export async function getOffPlanProjects(limit = 9, perDeveloperCap = 2) {
   const rows = await db
     .select(cardColumns)
     .from(properties)
-    .where(sql`cardinality(${properties.gallery}) > 1`)
+    .where(and(eq(properties.isHidden, false), sql`cardinality(${properties.gallery}) > 1`))
     .orderBy(asc(properties.constructionPercent), desc(properties.unitsCount))
     .limit(limit * 4); // wide pool to cap from before trimming to `limit`
 
@@ -269,11 +270,12 @@ export async function getFilterOptions() {
     db
       .selectDistinct({ value: properties.developer })
       .from(properties)
+      .where(eq(properties.isHidden, false))
       .orderBy(asc(properties.developer)),
     db
       .selectDistinct({ value: properties.area })
       .from(properties)
-      .where(sql`${properties.area} is not null`)
+      .where(and(eq(properties.isHidden, false), sql`${properties.area} is not null`))
       .orderBy(asc(properties.area)),
   ]);
 
@@ -293,11 +295,13 @@ export async function getDeveloperStats() {
       image: sql<string>`(
         SELECT display_image FROM properties p2
         WHERE p2.developer = properties.developer
+          AND p2.is_hidden = false
           AND p2.display_image NOT LIKE '%placeholder%'
         LIMIT 1
       )`,
     })
     .from(properties)
+    .where(eq(properties.isHidden, false))
     .groupBy(properties.developer)
     .orderBy(asc(properties.developer));
 
@@ -309,7 +313,7 @@ export async function getProjectsByDeveloper(developer: string) {
   const rows = await db
     .select(cardColumns)
     .from(properties)
-    .where(eq(properties.developer, developer))
+    .where(and(eq(properties.isHidden, false), eq(properties.developer, developer)))
     // Placeholder-only cards (gallery <= 1) sort last.
     .orderBy(
       sql`case when cardinality(${properties.gallery}) <= 1 then 1 else 0 end`,

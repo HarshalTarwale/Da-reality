@@ -1,5 +1,6 @@
 import {
   bigint,
+  boolean,
   doublePrecision,
   index,
   integer,
@@ -67,6 +68,14 @@ export const properties = pgTable(
 
     /** Alnair item id — unique key used for import dedup/upsert. */
     sourceId: text("source_id").unique(),
+
+    /**
+     * Temporary manual hide: excluded from every listing query when true.
+     * Used for properties with no real photography yet (source has <= 1
+     * gallery image, so the site would only ever show a placeholder card).
+     * Flip back to false once real images are available for the listing.
+     */
+    isHidden: boolean("is_hidden").notNull().default(false),
 
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
