@@ -1,11 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import FilterBar from "@/components/properties/FilterBar";
 import PropertyCard from "@/components/properties/PropertyCard";
+import Pagination from "@/components/properties/Pagination";
 import { defaultFilters, type Filters } from "@/components/properties/types";
 import type { ProjectCardData } from "@/lib/types";
 
+// 4 rows x 3 columns on desktop.
 const PAGE_SIZE = 12;
 
 function SearchOffIcon() {
@@ -63,22 +65,28 @@ export default function PropertyGrid({
   showDeveloperFilter?: boolean;
 }) {
   const [filters, setFilters] = useState<Filters>({ ...defaultFilters, ...initialFilters });
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [page, setPage] = useState(1);
+  const resultsTopRef = useRef<HTMLDivElement>(null);
 
   const results = useMemo(() => applyFilters(projects, filters), [projects, filters]);
+  const totalPages = Math.max(1, Math.ceil(results.length / PAGE_SIZE));
 
   function handleFilterChange(next: Partial<Filters>) {
     setFilters((prev) => ({ ...prev, ...next }));
-    setVisibleCount(PAGE_SIZE);
+    setPage(1);
   }
 
   function handleReset() {
     setFilters({ ...defaultFilters, ...initialFilters });
-    setVisibleCount(PAGE_SIZE);
+    setPage(1);
   }
 
-  const visible = results.slice(0, visibleCount);
-  const hasMore = visibleCount < results.length;
+  function handlePageChange(next: number) {
+    setPage(next);
+    resultsTopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  const visible = results.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
     <div>
@@ -91,7 +99,7 @@ export default function PropertyGrid({
         showDeveloperFilter={showDeveloperFilter}
       />
 
-      <section className="mx-auto max-w-7xl px-6 py-16 lg:px-12">
+      <section ref={resultsTopRef} className="mx-auto max-w-7xl scroll-mt-24 px-6 py-16 lg:px-12">
         {results.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-3xl bg-muted py-24 text-center">
             <span className="text-muted-foreground">
@@ -123,17 +131,7 @@ export default function PropertyGrid({
               ))}
             </div>
 
-            {hasMore && (
-              <div className="mt-12 flex justify-center">
-                <button
-                  type="button"
-                  onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
-                  className="rounded-lg border border-onyx px-8 py-3.5 text-center text-sm font-medium uppercase tracking-widest-luxe text-onyx transition-colors hover:bg-onyx hover:text-alabaster"
-                >
-                  Load More
-                </button>
-              </div>
-            )}
+            <Pagination currentPage={page} totalPages={totalPages} onPageChange={handlePageChange} />
           </>
         )}
       </section>
