@@ -522,6 +522,8 @@ export const developers = ["EMAAR", "DAMAC", "NAKHEEL", "SOBHA", "MERAAS", "OMNI
 export const contact = {
   address: "Boulevard Plaza, Level 14, Downtown Dubai, United Arab Emirates",
   phone: "+971 4 123 4567",
+  // Placeholder mobile number for WhatsApp — swap for the real business number.
+  whatsapp: "+971 50 123 4567",
   email: "concierge@dareality.ae",
   hours: "Monday – Saturday: 9:00 – 18:00 / Friday: 14:00 – 18:00",
 };
