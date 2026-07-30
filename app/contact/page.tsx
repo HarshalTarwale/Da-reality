@@ -35,8 +35,10 @@ export default function ContactPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-24 lg:px-12">
-        <ContactForm />
+      <section className="border-b border-stone bg-muted py-24">
+        <div className="mx-auto max-w-3xl px-6 lg:px-12">
+          <ContactForm />
+        </div>
       </section>
 
       <LocationSection />

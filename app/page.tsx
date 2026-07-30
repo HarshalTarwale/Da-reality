@@ -162,8 +162,20 @@ export default function Home() {
       <LocationSection />
 
       {/* Get in Touch */}
-      <section id="contact" className="bg-onyx py-24">
-        <div className="mx-auto max-w-7xl px-6 lg:px-12">
+      <section
+        id="contact"
+        className="relative overflow-hidden bg-gradient-to-b from-[#1a1d24] via-onyx to-[#1a1d24] py-24"
+      >
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.07]"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 1px 1px, var(--color-gold) 1px, transparent 0)",
+            backgroundSize: "32px 32px",
+          }}
+        />
+        <div className="pointer-events-none absolute -top-32 left-1/2 h-96 w-[36rem] -translate-x-1/2 rounded-full bg-gold/10 blur-3xl" />
+        <div className="relative mx-auto max-w-7xl px-6 lg:px-12">
           <div className="max-w-xl">
             <p className="text-xs font-medium uppercase tracking-widest-luxe text-gold">
               Concierge
