@@ -42,8 +42,7 @@ export default async function PropertiesPage() {
             Explore Our Properties
           </h1>
           <p className="mt-4 max-w-xl text-base leading-relaxed text-alabaster/80">
-            Browse {projects.length} new developments from {developers.length} of Dubai&apos;s
-            leading developers.
+            {`Browse ${projects.length} new developments from ${developers.length} of Dubai's leading developers.`}
           </p>
         </div>
       </section>

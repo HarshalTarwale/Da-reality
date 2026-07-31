@@ -33,35 +33,46 @@ function SearchIcon() {
   );
 }
 
-const selectClasses =
-  "w-full rounded-lg border border-stone bg-white px-4 py-3 text-sm text-onyx outline-none transition-colors focus:border-gold";
-const labelClasses = "mb-1.5 block text-xs font-medium uppercase tracking-widest-luxe text-muted-foreground";
-
-function SearchField({
-  value,
-  onChange,
-}: {
-  value: string;
-  onChange: (next: Partial<Filters>) => void;
-}) {
+function BuildingIcon() {
   return (
-    <div>
-      <label className={labelClasses}>Search</label>
-      <div className="relative">
-        <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">
-          <SearchIcon />
-        </span>
-        <input
-          type="text"
-          placeholder="Search by property name..."
-          className={`${selectClasses} pl-11`}
-          value={value}
-          onChange={(e) => onChange({ search: e.target.value })}
-        />
-      </div>
-    </div>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="h-3.5 w-3.5">
+      <path d="M4 21V6l7-3v18M11 21h9V10l-9-3" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M15 12h.01M15 16h.01M7 9h.01M7 13h.01M7 17h.01" strokeLinecap="round" />
+    </svg>
   );
 }
+
+function PinIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="h-3.5 w-3.5">
+      <path d="M12 21s7-6.5 7-11.5A7 7 0 0 0 5 9.5C5 14.5 12 21 12 21Z" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="12" cy="9.5" r="2.25" />
+    </svg>
+  );
+}
+
+function TagIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="h-3.5 w-3.5">
+      <path d="M3 12V5a2 2 0 0 1 2-2h7l9 9-9 9-9-9Z" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="7.5" cy="7.5" r="1.25" />
+    </svg>
+  );
+}
+
+function SortIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="h-3.5 w-3.5">
+      <path d="M7 4v16m0 0-3-3m3 3 3-3M17 20V4m0 0-3 3m3-3 3 3" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+const fieldHeight = "h-12";
+const selectClasses =
+  `${fieldHeight} w-full rounded-xl border border-stone bg-white px-4 text-sm text-onyx outline-none transition-colors focus:border-gold`;
+const labelClasses =
+  "mb-1.5 flex items-center gap-1.5 text-xs font-medium uppercase tracking-widest-luxe text-muted-foreground";
 
 function FilterFields({
   filters,
@@ -78,9 +89,30 @@ function FilterFields({
 }) {
   return (
     <>
+      {/* Search sits in the same row as the filters so every control lines up. */}
+      <div className="lg:col-span-2">
+        <label className={labelClasses}>
+          <SearchIcon /> Search
+        </label>
+        <div className="relative">
+          <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">
+            <SearchIcon />
+          </span>
+          <input
+            type="text"
+            placeholder="Search by property name..."
+            className={`${selectClasses} pl-11`}
+            value={filters.search}
+            onChange={(e) => onChange({ search: e.target.value })}
+          />
+        </div>
+      </div>
+
       {showDeveloperFilter && (
         <div>
-          <label className={labelClasses}>Developer</label>
+          <label className={labelClasses}>
+            <BuildingIcon /> Developer
+          </label>
           <select
             className={selectClasses}
             value={filters.developer}
@@ -97,7 +129,9 @@ function FilterFields({
       )}
 
       <div>
-        <label className={labelClasses}>District</label>
+        <label className={labelClasses}>
+          <PinIcon /> District
+        </label>
         <select
           className={selectClasses}
           value={filters.area}
@@ -112,8 +146,10 @@ function FilterFields({
         </select>
       </div>
 
-      <div className="lg:col-span-2">
-        <label className={labelClasses}>Price Range (AED)</label>
+      <div>
+        <label className={labelClasses}>
+          <TagIcon /> Price Range (AED)
+        </label>
         <div className="flex items-center gap-2">
           <input
             type="number"
@@ -124,7 +160,7 @@ function FilterFields({
             value={filters.minPrice}
             onChange={(e) => onChange({ minPrice: e.target.value })}
           />
-          <span className="text-muted-foreground">–</span>
+          <span className="shrink-0 text-muted-foreground">–</span>
           <input
             type="number"
             min={0}
@@ -138,7 +174,9 @@ function FilterFields({
       </div>
 
       <div>
-        <label className={labelClasses}>Sort By</label>
+        <label className={labelClasses}>
+          <SortIcon /> Sort By
+        </label>
         <select
           className={selectClasses}
           value={filters.sort}
@@ -176,47 +214,40 @@ export default function FilterBar({
   return (
     <div className="border-b border-stone bg-white lg:sticky lg:top-20 lg:z-40">
       <div className="mx-auto max-w-7xl px-6 py-5 lg:px-12">
-        {/* Desktop filter row */}
-        <div className="hidden lg:block">
-          <div className="lg:max-w-md">
-            <SearchField value={filters.search} onChange={onChange} />
-          </div>
-          <div
-            className={`mt-4 grid gap-4 ${
-              showDeveloperFilter ? "lg:grid-cols-5" : "lg:grid-cols-4"
-            }`}
-          >
-            <FilterFields
-              filters={filters}
-              onChange={onChange}
-              developers={developers}
-              areas={areas}
-              showDeveloperFilter={showDeveloperFilter}
-            />
-          </div>
+        {/* Desktop: search + every filter on a single aligned row. */}
+        <div
+          className={`hidden items-end gap-4 lg:grid ${
+            showDeveloperFilter ? "lg:grid-cols-6" : "lg:grid-cols-5"
+          }`}
+        >
+          <FilterFields
+            filters={filters}
+            onChange={onChange}
+            developers={developers}
+            areas={areas}
+            showDeveloperFilter={showDeveloperFilter}
+          />
         </div>
 
         {/* Mobile trigger */}
         <div className="flex items-center gap-3 lg:hidden">
-          <div className="flex-1">
-            <div className="relative">
-              <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">
-                <SearchIcon />
-              </span>
-              <input
-                type="text"
-                placeholder="Search by property name..."
-                className={`${selectClasses} pl-11`}
-                value={filters.search}
-                onChange={(e) => onChange({ search: e.target.value })}
-              />
-            </div>
+          <div className="relative flex-1">
+            <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">
+              <SearchIcon />
+            </span>
+            <input
+              type="text"
+              placeholder="Search by property name..."
+              className={`${selectClasses} pl-11`}
+              value={filters.search}
+              onChange={(e) => onChange({ search: e.target.value })}
+            />
           </div>
           <button
             type="button"
             onClick={() => setMobileOpen(true)}
             aria-label="Open filters"
-            className="flex h-11.5 shrink-0 items-center gap-2 rounded-lg border border-onyx px-5 text-xs font-medium uppercase tracking-widest-luxe text-onyx"
+            className={`${fieldHeight} flex shrink-0 items-center gap-2 rounded-xl border border-onyx px-5 text-xs font-medium uppercase tracking-widest-luxe text-onyx`}
           >
             <FilterIcon /> Filters
           </button>
@@ -255,14 +286,14 @@ export default function FilterBar({
               <button
                 type="button"
                 onClick={() => onChange(defaultFilters)}
-                className="flex-1 rounded-lg border border-onyx px-6 py-3.5 text-center text-sm font-medium uppercase tracking-widest-luxe text-onyx"
+                className="flex-1 rounded-xl border border-onyx px-6 py-3.5 text-center text-sm font-medium uppercase tracking-widest-luxe text-onyx"
               >
                 Reset
               </button>
               <button
                 type="button"
                 onClick={() => setMobileOpen(false)}
-                className="flex-1 rounded-lg bg-gold px-6 py-3.5 text-center text-sm font-medium uppercase tracking-widest-luxe text-onyx transition-colors hover:bg-gold-dark"
+                className="flex-1 rounded-xl bg-gold px-6 py-3.5 text-center text-sm font-medium uppercase tracking-widest-luxe text-onyx transition-colors hover:bg-gold-dark"
               >
                 Show {resultCount} {resultCount === 1 ? "Project" : "Projects"}
               </button>

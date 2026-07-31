@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import PhoneInput from "@/components/PhoneInput";
 import { formatAed } from "@/lib/types";
 
 const labelClasses = "text-xs uppercase tracking-widest-luxe text-muted-foreground";
@@ -47,7 +48,9 @@ export default function EnquiryForm({
           </div>
           <div>
             <label className={labelClasses}>Phone</label>
-            <input type="tel" required placeholder="+971 ..." className={inputClasses} />
+            <div className="mt-2">
+              <PhoneInput name="phone" variant="underline" required />
+            </div>
           </div>
           <div>
             <label className={labelClasses}>Email</label>

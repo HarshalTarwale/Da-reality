@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import PhoneInput from "@/components/PhoneInput";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -153,7 +154,7 @@ export default function ContactForm() {
           <label className={fieldLabelClasses}>
             <PhoneIcon /> Phone
           </label>
-          <input type="tel" name="phone" placeholder="+971 ..." className={fieldClasses(false)} />
+          <PhoneInput name="phone" variant="boxed" />
         </div>
         <div className="sm:col-span-2">
           <label className={fieldLabelClasses}>
