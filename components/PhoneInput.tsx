@@ -51,12 +51,12 @@ export default function PhoneInput({
       }`;
 
   const triggerClasses = boxed
-    ? "flex items-center gap-1.5 border-r border-stone pl-4 pr-3 text-sm text-onyx"
-    : "flex items-center gap-1.5 pr-3 text-sm text-onyx";
+    ? "flex h-full items-center gap-1 border-r border-stone px-4 text-sm text-onyx"
+    : "flex h-full items-center gap-1 border-r border-stone pr-3 text-sm text-onyx";
 
   const numberClasses = boxed
     ? "w-full bg-transparent px-4 py-3.5 text-sm text-onyx placeholder:text-muted-foreground/50 focus:outline-none"
-    : "w-full bg-transparent py-2 text-sm text-onyx placeholder:text-muted-foreground/60 focus:outline-none";
+    : "w-full bg-transparent pl-3 py-2 text-sm text-onyx placeholder:text-muted-foreground/60 focus:outline-none";
 
   return (
     <div className={shellClasses}>
@@ -64,8 +64,7 @@ export default function PhoneInput({
           accessible and uses the platform picker on mobile. */}
       <div className="relative shrink-0">
         <div className={triggerClasses} aria-hidden="true">
-          <span className="text-base leading-none">{selected.flag}</span>
-          <span className="tabular-nums">{selected.dial}</span>
+          <span className="tabular-nums font-medium">{selected.dial}</span>
           <span className="text-muted-foreground">
             <ChevronDownIcon />
           </span>
@@ -78,7 +77,7 @@ export default function PhoneInput({
         >
           {countryCodes.map((c) => (
             <option key={c.iso} value={c.iso}>
-              {c.flag} {c.name} ({c.dial})
+              {c.dial} — {c.name}
             </option>
           ))}
         </select>

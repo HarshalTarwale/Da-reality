@@ -148,7 +148,7 @@ function FilterFields({
 
       <div>
         <label className={labelClasses}>
-          <TagIcon /> Price Range (AED)
+          <TagIcon /> Price Range
         </label>
         <div className="flex items-center gap-2">
           <input
