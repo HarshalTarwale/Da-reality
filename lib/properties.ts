@@ -1,4 +1,16 @@
-import { and, asc, desc, eq, gte, lte, ne, or, sql, count, type SQL } from "drizzle-orm";
+import {
+  and,
+  asc,
+  desc,
+  eq,
+  gte,
+  lte,
+  ne,
+  or,
+  sql,
+  count,
+  type SQL,
+} from "drizzle-orm";
 import { db } from "@/lib/db";
 import { properties } from "@/db/schema";
 import type { Project, ProjectCardData } from "@/lib/types";
@@ -114,6 +126,33 @@ function toProjectCard(row: CardRow): ProjectCardData {
   };
 }
 
+/**
+ * The developers we lead with across the site. Their projects are surfaced
+ * first in the default listing order and fill the Home page's featured grid.
+ * Everything else still appears — this only affects ordering, never inclusion.
+ */
+export const FEATURED_DEVELOPERS = [
+  "Emaar Properties",
+  "Damac",
+  "Sobha",
+  "Binghatti",
+  "Ellington",
+  "Azizi",
+] as const;
+
+/**
+ * "High demand" proxy. The source data carries no sales or enquiry figures, so
+ * we rank on what it does have: large, fully-published, well-photographed
+ * developments — the flagship launches that get the most marketing and
+ * buyer attention (Sobha One, Binghatti Skyrise, Damac Riverside, and so on).
+ */
+const demandRank = [
+  // A published price and real photography are table stakes for a good card.
+  sql`case when ${properties.priceFrom} > 0 then 0 else 1 end`,
+  sql`case when cardinality(${properties.gallery}) > 1 then 0 else 1 end`,
+  desc(properties.unitsCount),
+];
+
 export type ProjectFilters = {
   developer?: string;
   area?: string;
@@ -148,6 +187,29 @@ export async function getProjects(filters: ProjectFilters = {}) {
   // added to their system, so it is a much better "newest" proxy.
   const newestFirst = sql`(${properties.id})::bigint desc`;
 
+  // Default view leads with the flagship projects from our featured developers,
+  // then falls back to newest. Explicit user sorts (price/newest) are honoured
+  // as-is so choosing a sort always does exactly what it says.
+  const featuredDevelopersList = sql.join(
+    FEATURED_DEVELOPERS.map((d) => sql`${d}`),
+    sql`, `
+  );
+  const featuredDevelopersFirst = sql`case when ${properties.developer} in (${featuredDevelopersList}) then 0 else 1 end`;
+
+  /**
+   * Position of a project within its own developer's flagship list. Ordering by
+   * this first round-robins the developers — every featured developer's best
+   * project appears before anyone's second-best — so a high-volume developer
+   * like Binghatti can't crowd Emaar or Ellington off the first page.
+   */
+  const rankWithinDeveloper = sql`row_number() over (
+    partition by ${properties.developer}
+    order by
+      case when ${properties.priceFrom} > 0 then 0 else 1 end,
+      case when cardinality(${properties.gallery}) > 1 then 0 else 1 end,
+      ${properties.unitsCount} desc
+  )`;
+
   // Unpriced projects (price_from = 0 upstream) always sort last, in both
   // directions — Postgres would otherwise place NULLs first on DESC.
   const orderBy =
@@ -155,7 +217,15 @@ export async function getProjects(filters: ProjectFilters = {}) {
       ? [noImageLast, sql`nullif(${properties.priceFrom}, 0) asc nulls last`]
       : filters.sort === "price-desc"
         ? [noImageLast, sql`nullif(${properties.priceFrom}, 0) desc nulls last`]
-        : [noImageLast, newestFirst];
+        : filters.sort === "newest"
+          ? [noImageLast, newestFirst]
+          : [
+              noImageLast,
+              featuredDevelopersFirst,
+              rankWithinDeveloper,
+              ...demandRank,
+              newestFirst,
+            ];
 
   const rows = await db
     .select(cardColumns)
@@ -195,33 +265,23 @@ export async function getSimilarProjects(
 }
 
 /**
- * A handful of standout projects per developer, drawn from the developers
- * with the most listings. Used for the Home page's Featured Developments grid
- * so it shows real variety rather than whichever developer imported last.
- *
- * "Best" = has a published price and real photography, then largest by unit
- * count — a reasonable flagship-project proxy given the fields we have.
+ * Flagship projects from FEATURED_DEVELOPERS, one developer at a time and then
+ * interleaved, so the Home page grid alternates names instead of showing a
+ * block from a single developer. Ranked by `demandRank`.
  */
-export async function getFeaturedFromTopDevelopers(developerCount = 5, perDeveloper = 2) {
-  const topDevelopers = await db
-    .select({ developer: properties.developer, count: count() })
-    .from(properties)
-    .where(eq(properties.isHidden, false))
-    .groupBy(properties.developer)
-    .orderBy(desc(count()))
-    .limit(developerCount);
+export async function getFeaturedFromTopDevelopers(
+  developerCount = FEATURED_DEVELOPERS.length,
+  perDeveloper = 2
+) {
+  const chosen = FEATURED_DEVELOPERS.slice(0, developerCount);
 
   const picks = await Promise.all(
-    topDevelopers.map(({ developer }) =>
+    chosen.map((developer) =>
       db
         .select(cardColumns)
         .from(properties)
         .where(and(eq(properties.isHidden, false), eq(properties.developer, developer)))
-        .orderBy(
-          sql`case when ${properties.priceFrom} > 0 then 0 else 1 end`,
-          sql`case when cardinality(${properties.gallery}) > 1 then 0 else 1 end`,
-          desc(properties.unitsCount)
-        )
+        .orderBy(...demandRank)
         .limit(perDeveloper)
     )
   );

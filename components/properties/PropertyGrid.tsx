@@ -44,8 +44,11 @@ function applyFilters(projects: ProjectCardData[], filters: Filters) {
     filtered.sort((a, b) => (effectivePrice(a) ?? Infinity) - (effectivePrice(b) ?? Infinity));
   } else if (filters.sort === "Price: High to Low") {
     filtered.sort((a, b) => (effectivePrice(b) ?? -Infinity) - (effectivePrice(a) ?? -Infinity));
+  } else if (filters.sort === "Newest") {
+    // Alnair's id increments as projects are added, so it is our recency proxy.
+    filtered.sort((a, b) => Number(b.id) - Number(a.id));
   }
-  // "Newest" keeps the server's createdAt DESC ordering.
+  // "Featured" keeps the server's order: featured developers' flagships first.
 
   return filtered;
 }

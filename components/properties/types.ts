@@ -1,6 +1,11 @@
 export type { Project, UnitBreakdown, UnitStats } from "@/lib/types";
 
-export const sortOptions = ["Newest", "Price: Low to High", "Price: High to Low"] as const;
+export const sortOptions = [
+  "Featured",
+  "Newest",
+  "Price: Low to High",
+  "Price: High to Low",
+] as const;
 
 export type SortOption = (typeof sortOptions)[number];
 
@@ -24,5 +29,7 @@ export const defaultFilters: Filters = {
   area: "All",
   minPrice: "",
   maxPrice: "",
-  sort: "Newest",
+  // Matches the server's default order: flagship projects from our featured
+  // developers first, then everything else.
+  sort: "Featured",
 };

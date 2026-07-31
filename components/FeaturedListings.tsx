@@ -1,13 +1,13 @@
 import Link from "next/link";
 import SectionHeading from "@/components/SectionHeading";
 import PropertyCard from "@/components/properties/PropertyCard";
-import { getFeaturedFromTopDevelopers } from "@/lib/properties";
+import { FEATURED_DEVELOPERS, getFeaturedFromTopDevelopers } from "@/lib/properties";
 
-/** Server component: pulls standout projects from the top 5 developers by listing count. */
+/** Server component: the flagship project from each of our featured developers. */
 export default async function FeaturedListings() {
-  // 2 rows x 3 columns on desktop = 6 cards. With 5 top developers that's one
-  // flagship pick each, plus a second pick from the #1 developer to fill the grid.
-  const projects = (await getFeaturedFromTopDevelopers(5, 2)).slice(0, 6);
+  // 2 rows x 3 columns on desktop = 6 cards, and we lead with 6 developers —
+  // so this is exactly one flagship pick each, every developer represented.
+  const projects = await getFeaturedFromTopDevelopers(FEATURED_DEVELOPERS.length, 1);
 
   if (projects.length === 0) return null;
 
