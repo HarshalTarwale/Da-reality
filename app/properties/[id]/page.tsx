@@ -94,7 +94,7 @@ export async function generateMetadata({
   if (!project) return {};
 
   return {
-    title: `${project.title} — Da Reality`,
+    title: `${project.title} — Da Realty`,
     description: `${project.title} by ${project.developer}${
       project.area ? ` in ${project.area}` : ""
     }. ${formatPriceRange(project.priceFrom, project.priceTo)}.`,

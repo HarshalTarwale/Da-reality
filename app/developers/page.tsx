@@ -5,7 +5,7 @@ import { getDeveloperStats } from "@/lib/properties";
 import { images } from "@/lib/data";
 
 export const metadata: Metadata = {
-  title: "Developers — Da Reality",
+  title: "Developers — Da Realty",
   description:
     "Browse Dubai's top property developers. Explore projects by EMAAR, DAMAC, NAKHEEL, SOBHA, MERAAS, OMNIYAT and more.",
 };
@@ -23,7 +23,7 @@ export default async function DevelopersPage() {
       <section className="relative flex h-[42vh] min-h-[320px] items-center overflow-hidden bg-onyx">
         <Image
           src={images.downtownSkyline}
-          alt="Dubai skyline — Da Reality developers"
+          alt="Dubai skyline — Da Realty developers"
           fill
           priority
           className="object-cover opacity-80"

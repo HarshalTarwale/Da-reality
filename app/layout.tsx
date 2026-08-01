@@ -18,9 +18,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Da Reality — Dubai Luxury Real Estate",
+  title: "Da Realty — Dubai Luxury Real Estate",
   description:
-    "Da Reality — Dubai's premier luxury real estate advisory. Discover the finest penthouses, villas, and mansions across Palm Jumeirah, Downtown Dubai, and Dubai Hills.",
+    "Da Realty — Dubai's premier luxury real estate advisory. Discover the finest penthouses, villas, and mansions across Palm Jumeirah, Downtown Dubai, and Dubai Hills.",
 };
 
 export default function RootLayout({

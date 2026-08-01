@@ -39,7 +39,7 @@ export const aboutFaqs = [
   },
   {
     q: "Is buying property in Dubai safe and transparent?",
-    a: "Yes. All freehold transactions are registered and regulated by the Dubai Land Department (DLD), which maintains a public title deed system. Da Reality only lists verified, ready properties and provides a full transparent breakdown of costs before you commit to anything.",
+    a: "Yes. All freehold transactions are registered and regulated by the Dubai Land Department (DLD), which maintains a public title deed system. Da Realty only lists verified, ready properties and provides a full transparent breakdown of costs before you commit to anything.",
   },
   {
     q: "I'm a first-time buyer — what guidance do you offer?",
@@ -62,7 +62,7 @@ export const aboutFaqs = [
     a: "Buyers should budget for the DLD transfer fee (4% of the purchase price), a small admin fee, and agency commission where applicable. We provide a full, itemised cost breakdown before you make any commitment — no surprises at transfer.",
   },
   {
-    q: "Can Da Reality help me sell a property as well?",
+    q: "Can Da Realty help me sell a property as well?",
     a: "Yes. Alongside helping buyers find ready properties, we work with sellers to price, market, and manage the sale of their property through to a smooth handover — with the same transparent, client-first approach.",
   },
 ];

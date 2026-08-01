@@ -19,8 +19,8 @@ export async function generateMetadata({
   const { developer } = await params;
   const name = decodeURIComponent(developer);
   return {
-    title: `${name} Projects — Da Reality`,
-    description: `Browse all ${name} property developments available through Da Reality in Dubai.`,
+    title: `${name} Projects — Da Realty`,
+    description: `Browse all ${name} property developments available through Da Realty in Dubai.`,
   };
 }
 
@@ -50,7 +50,7 @@ export default async function DeveloperDetailPage({
       <section className="relative flex h-[42vh] min-h-[320px] items-center overflow-hidden bg-onyx">
         <Image
           src={images.downtownSkyline}
-          alt={`${name} developments — Da Reality`}
+          alt={`${name} developments — Da Realty`}
           fill
           priority
           className="object-cover opacity-80"

@@ -6,9 +6,9 @@ import { getProjects, getFilterOptions } from "@/lib/properties";
 import { images } from "@/lib/data";
 
 export const metadata: Metadata = {
-  title: "Properties — Da Reality",
+  title: "Properties — Da Realty",
   description:
-    "Browse Da Reality's portfolio of new developments from Dubai's leading developers.",
+    "Browse Da Realty's portfolio of new developments from Dubai's leading developers.",
 };
 
 // The catalog only changes when the import script runs, so cache this page
@@ -28,7 +28,7 @@ export default async function PropertiesPage() {
       <section className="relative flex h-[42vh] min-h-[320px] items-center overflow-hidden bg-onyx">
         <Image
           src={images.downtownSkyline}
-          alt="Dubai skyline — Da Reality properties"
+          alt="Dubai skyline — Da Realty properties"
           fill
           priority
           className="object-cover opacity-80"

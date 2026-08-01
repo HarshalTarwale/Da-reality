@@ -9,9 +9,9 @@ import { aboutStats, whyChooseUsList, aboutFaqs } from "@/components/about/data"
 import { images } from "@/lib/data";
 
 export const metadata: Metadata = {
-  title: "About Us — Da Reality",
+  title: "About Us — Da Realty",
   description:
-    "Da Reality is Dubai's trusted partner for ready property sales — learn our story, our values, and why clients choose us.",
+    "Da Realty is Dubai's trusted partner for ready property sales — learn our story, our values, and why clients choose us.",
 };
 
 function ShieldIcon() {
@@ -66,7 +66,7 @@ export default function AboutPage() {
       <section className="relative flex h-[42vh] min-h-[320px] items-center overflow-hidden bg-onyx">
         <Image
           src={images.downtownSkyline}
-          alt="Dubai skyline — about Da Reality"
+          alt="Dubai skyline — about Da Realty"
           fill
           priority
           className="object-cover opacity-80"
@@ -86,7 +86,7 @@ export default function AboutPage() {
           <div className="relative aspect-4/5 overflow-hidden rounded-3xl">
             <Image
               src={images.office}
-              alt="Da Reality — Downtown Dubai skyline"
+              alt="Da Realty — Downtown Dubai skyline"
               fill
               className="object-cover"
             />
@@ -95,7 +95,7 @@ export default function AboutPage() {
             <SectionHeading
               eyebrow="Our Story"
               title="Built on a simple idea: property should feel personal"
-              description="Da Reality was founded to bring clarity and care to a market that can often feel overwhelming. We saw too many buyers navigating Dubai real estate without a trusted guide — so we set out to be exactly that."
+              description="Da Realty was founded to bring clarity and care to a market that can often feel overwhelming. We saw too many buyers navigating Dubai real estate without a trusted guide — so we set out to be exactly that."
             />
             <div className="mt-6 space-y-4 text-base leading-relaxed text-muted-foreground">
               <p>
@@ -162,7 +162,7 @@ export default function AboutPage() {
 
       {/* Why Choose Us */}
       <section className="mx-auto max-w-7xl px-6 py-24 lg:px-12">
-        <SectionHeading eyebrow="The Da Reality Difference" title="Why Choose Us" align="center" />
+        <SectionHeading eyebrow="The Da Realty Difference" title="Why Choose Us" align="center" />
         <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2">
           {whyChooseUsList.map((item) => (
             <div key={item.number} className="flex gap-5 rounded-3xl border border-stone bg-white p-8">

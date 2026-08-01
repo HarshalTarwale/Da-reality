@@ -63,7 +63,7 @@ export default function LocationSection() {
         </div>
         <div className="overflow-hidden rounded-3xl">
           <iframe
-            title="Da Reality office location in Dubai"
+            title="Da Realty office location in Dubai"
             src="https://www.google.com/maps?q=Boulevard+Plaza+Downtown+Dubai&output=embed"
             className="h-[420px] w-full border-0"
             loading="lazy"

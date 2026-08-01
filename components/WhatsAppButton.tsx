@@ -12,7 +12,7 @@ function WhatsAppIcon() {
 export default function WhatsAppButton() {
   const digits = contact.whatsapp.replace(/[^\d]/g, "");
   const message = encodeURIComponent(
-    "Hi Da Reality, I'm interested in learning more about your properties."
+    "Hi Da Realty, I'm interested in learning more about your properties."
   );
 
   return (

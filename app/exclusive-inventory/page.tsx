@@ -6,9 +6,9 @@ import { getExclusiveProjects, getExclusiveFilterOptions } from "@/lib/propertie
 import { images } from "@/lib/data";
 
 export const metadata: Metadata = {
-  title: "Our Exclusive Inventory — Da Reality",
+  title: "Our Exclusive Inventory — Da Realty",
   description:
-    "A private collection of Dubai's most distinguished residences, available exclusively through Da Reality.",
+    "A private collection of Dubai's most distinguished residences, available exclusively through Da Realty.",
 };
 
 // Same caching model as the main catalog: refresh in the background every
@@ -26,7 +26,7 @@ export default async function ExclusiveInventoryPage() {
       <section className="relative flex h-[42vh] min-h-[320px] items-center overflow-hidden bg-onyx">
         <Image
           src={images.penthouseTerrace}
-          alt="Da Reality — exclusive inventory"
+          alt="Da Realty — exclusive inventory"
           fill
           priority
           className="object-cover opacity-80"

@@ -85,20 +85,20 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Why Da Reality */}
+      {/* Why Da Realty */}
       <section id="about" className="mx-auto max-w-7xl px-6 py-24 lg:px-12">
         <div className="grid grid-cols-1 gap-16 lg:grid-cols-2 lg:items-center">
           <div className="relative aspect-4/5 overflow-hidden rounded-3xl">
             <Image
               src={images.office}
-              alt="Da Reality — Downtown Dubai skyline"
+              alt="Da Realty — Downtown Dubai skyline"
               fill
               className="object-cover"
             />
           </div>
           <div>
             <SectionHeading
-              eyebrow="Why Da Reality"
+              eyebrow="Why Da Realty"
               title={
                 <>
                   A gallery approach to
@@ -106,7 +106,7 @@ export default function Home() {
                   luxury property
                 </>
               }
-              description="Da Reality was founded on a singular belief: that property acquisition should feel like curating a private collection. We treat every residence as a masterpiece — presenting it with the reverence, context, and discretion it deserves."
+              description="Da Realty was founded on a singular belief: that property acquisition should feel like curating a private collection. We treat every residence as a masterpiece — presenting it with the reverence, context, and discretion it deserves."
             />
             <div className="mt-10 space-y-8">
               {pillars.map((pillar) => (
@@ -190,7 +190,7 @@ export default function Home() {
               <div className="relative aspect-4/3 overflow-hidden rounded-3xl ring-1 ring-gold/30">
                 <Image
                   src={images.marinaApartmentInterior}
-                  alt="Da Reality client lounge"
+                  alt="Da Realty client lounge"
                   fill
                   className="object-cover"
                 />

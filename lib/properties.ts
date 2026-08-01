@@ -349,7 +349,7 @@ export async function getFilterOptions() {
  * Minimum price (AED) a listing needs to appear in the exclusive inventory.
  *
  * PLACEHOLDER SELECTION RULE — the source data has no "exclusive" flag, so for
- * now the page shows the top of the portfolio by price. When Da Reality's real
+ * now the page shows the top of the portfolio by price. When Da Realty's real
  * exclusive listings are decided, replace this with an `is_exclusive` column on
  * the properties table (set via the import script or an admin action) and swap
  * the filter below for `eq(properties.isExclusive, true)`.

@@ -5,9 +5,9 @@ import LocationSection from "@/components/LocationSection";
 import { images } from "@/lib/data";
 
 export const metadata: Metadata = {
-  title: "Contact — Da Reality",
+  title: "Contact — Da Realty",
   description:
-    "Get in touch with Da Reality's advisory team to arrange a private consultation or property viewing in Dubai.",
+    "Get in touch with Da Realty's advisory team to arrange a private consultation or property viewing in Dubai.",
 };
 
 export default function ContactPage() {
@@ -16,7 +16,7 @@ export default function ContactPage() {
       <section className="relative flex h-[42vh] min-h-[320px] items-center overflow-hidden bg-onyx">
         <Image
           src={images.marinaApartmentInterior}
-          alt="Da Reality — client lounge with Marina view"
+          alt="Da Realty — client lounge with Marina view"
           fill
           priority
           className="object-cover opacity-80"

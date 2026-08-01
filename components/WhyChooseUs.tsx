@@ -29,7 +29,7 @@ export default function WhyChooseUs() {
   return (
     <section id="why-choose-us" className="mx-auto max-w-7xl px-6 py-24 lg:px-12">
       <SectionHeading
-        eyebrow="The Da Reality Difference"
+        eyebrow="The Da Realty Difference"
         title="Why Choose Us"
         align="center"
       />

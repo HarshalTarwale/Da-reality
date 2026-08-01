@@ -454,14 +454,14 @@ export const faqs = [
   },
   {
     q: "What is the minimum investment for a Golden Visa?",
-    a: "A 10-year Golden Visa is granted to property investors purchasing real estate valued at AED 2 million or above. Da Reality's specialists will guide you through eligibility and the full application process.",
+    a: "A 10-year Golden Visa is granted to property investors purchasing real estate valued at AED 2 million or above. Da Realty's specialists will guide you through eligibility and the full application process.",
   },
   {
     q: "Are there additional costs beyond the purchase price?",
     a: "Buyers should budget approximately 4% for the Dubai Land Department transfer fee, plus a nominal admin fee and agent commission if applicable. We provide a transparent cost breakdown before any commitment.",
   },
   {
-    q: "How does Da Reality assist with off-plan investments?",
+    q: "How does Da Realty assist with off-plan investments?",
     a: "We offer exclusive early access to off-plan launches from top developers, often at preferred pricing. Our team conducts due diligence on every project and manages the full reservation and payment-plan process end-to-end.",
   },
 ];
@@ -524,7 +524,7 @@ export const contact = {
   phone: "+971 4 123 4567",
   // Placeholder mobile number for WhatsApp — swap for the real business number.
   whatsapp: "+971 50 123 4567",
-  email: "concierge@dareality.ae",
+  email: "concierge@darealty.ae",
   hours: "Monday – Saturday: 9:00 – 18:00 / Friday: 14:00 – 18:00",
 };
 

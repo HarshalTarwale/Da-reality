@@ -25,13 +25,13 @@ export default function Footer() {
           <div className="flex items-center gap-3">
             <Image
               src={logo}
-              alt="Da Reality"
+              alt="Da Realty"
               width={40}
               height={40}
               className="h-10 w-10 rounded-lg object-contain"
             />
             <span className="font-heading text-lg font-semibold tracking-wide">
-              DA REALITY
+              Da Realty
             </span>
           </div>
           <p className="mt-5 max-w-sm text-sm leading-relaxed text-alabaster/70">
@@ -81,7 +81,7 @@ export default function Footer() {
       <div className="border-t border-alabaster/10">
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-4 px-6 py-6 text-xs text-alabaster/60 sm:flex-row sm:items-center lg:px-12">
           <p>
-            © {year} Da Reality. All rights reserved. · {contact.address}
+            © {year} Da Realty. All rights reserved. · {contact.address}
           </p>
           <div className="flex gap-6">
             <Link href="#" className="hover:text-alabaster">

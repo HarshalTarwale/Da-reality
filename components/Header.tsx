@@ -30,7 +30,7 @@ export default function Header() {
         <Link href="/" className="flex items-center">
           <Image
             src={logo}
-            alt="Da Reality"
+            alt="Da Realty"
             width={56}
             height={56}
             className="h-14 w-14 rounded-xl object-contain"
