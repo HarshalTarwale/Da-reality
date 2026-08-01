@@ -9,6 +9,7 @@ import { logo } from "@/lib/data";
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "Property", href: "/properties" },
+  { label: "Exclusive Inventory", href: "/exclusive-inventory" },
   { label: "About", href: "/about" },
   { label: "Developers", href: "/developers" },
 ];
@@ -37,13 +38,13 @@ export default function Header() {
           />
         </Link>
 
-        <nav className="hidden items-center gap-10 md:flex">
+        <nav className="hidden items-center gap-5 md:flex lg:gap-8">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               aria-current={isActive(pathname, link.href) ? "page" : undefined}
-              className={`text-sm font-medium uppercase tracking-widest-luxe text-onyx/80 transition-all hover:underline hover:decoration-onyx hover:underline-offset-4 ${
+              className={`whitespace-nowrap text-sm font-medium uppercase tracking-widest-luxe text-onyx/80 transition-all hover:underline hover:decoration-onyx hover:underline-offset-4 ${
                 isActive(pathname, link.href) ? "underline decoration-onyx underline-offset-4" : ""
               }`}
             >

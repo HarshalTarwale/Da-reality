@@ -345,6 +345,65 @@ export async function getFilterOptions() {
   };
 }
 
+/**
+ * Minimum price (AED) a listing needs to appear in the exclusive inventory.
+ *
+ * PLACEHOLDER SELECTION RULE — the source data has no "exclusive" flag, so for
+ * now the page shows the top of the portfolio by price. When Da Reality's real
+ * exclusive listings are decided, replace this with an `is_exclusive` column on
+ * the properties table (set via the import script or an admin action) and swap
+ * the filter below for `eq(properties.isExclusive, true)`.
+ */
+export const EXCLUSIVE_MIN_PRICE = 10_000_000;
+
+/** Listings shown on the Our Exclusive Inventory page. */
+export async function getExclusiveProjects() {
+  const rows = await db
+    .select(cardColumns)
+    .from(properties)
+    .where(
+      and(
+        eq(properties.isHidden, false),
+        gte(properties.priceFrom, EXCLUSIVE_MIN_PRICE)
+      )
+    )
+    .orderBy(
+      sql`case when cardinality(${properties.gallery}) <= 1 then 1 else 0 end`,
+      desc(properties.priceFrom)
+    );
+
+  return rows.map(toProjectCard);
+}
+
+/** Developer/district options limited to what the exclusive listings contain. */
+export async function getExclusiveFilterOptions() {
+  const [devs, areas] = await Promise.all([
+    db
+      .selectDistinct({ value: properties.developer })
+      .from(properties)
+      .where(
+        and(eq(properties.isHidden, false), gte(properties.priceFrom, EXCLUSIVE_MIN_PRICE))
+      )
+      .orderBy(asc(properties.developer)),
+    db
+      .selectDistinct({ value: properties.area })
+      .from(properties)
+      .where(
+        and(
+          eq(properties.isHidden, false),
+          gte(properties.priceFrom, EXCLUSIVE_MIN_PRICE),
+          sql`${properties.area} is not null`
+        )
+      )
+      .orderBy(asc(properties.area)),
+  ]);
+
+  return {
+    developers: devs.map((d) => d.value).filter(Boolean) as string[],
+    areas: areas.map((a) => a.value).filter(Boolean) as string[],
+  };
+}
+
 /** Developer name + how many projects they have + one representative cover image. */
 export async function getDeveloperStats() {
   const rows = await db
